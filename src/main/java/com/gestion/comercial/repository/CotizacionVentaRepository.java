@@ -1,2 +1,13 @@
-package com.gestion.comercial.repository;public interface CotizacionVentaRepository {
+package com.gestion.comercial.repository;
+
+import com.gestion.comercial.entity.CotizacionVenta;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+
+@Repository
+public interface CotizacionVentaRepository extends JpaRepository<CotizacionVenta,Long>{
+
+    Long countCotizacionVentaBySucursal(String sucursal);
+
 }
