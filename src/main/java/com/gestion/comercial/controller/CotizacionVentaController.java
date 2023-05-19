@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/cotizaciones")
@@ -41,5 +40,10 @@ public class CotizacionVentaController {
                                                       @RequestParam(required = false) String patente,
                                                       @RequestParam(required = false) String dniCliente) {
         return cotizacionVentaService.getCotizacionesConFiltros(sucursal, idVendedor, patente, dniCliente);
+    }
+
+    @GetMapping("/getAll")
+    public List<CotizacionVentaResponse> getAll() {
+        return cotizacionVentaService.getAll();
     }
 }

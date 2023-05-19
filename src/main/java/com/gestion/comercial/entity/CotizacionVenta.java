@@ -1,5 +1,6 @@
 package com.gestion.comercial.entity;
 
+import com.gestion.comercial.types.EstadoCotizacion;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,8 +29,8 @@ public class CotizacionVenta {
     @Column(name = "patente", length = 7, nullable = false)
     private String patente;
 
-    @Column(name = "dni_cliente", length = 10, nullable = false)
-    private String dniCliente;
+    @Column(name = "nombre_cliente", length = 10, nullable = false)
+    private String nombreCliente;
 
     @CreationTimestamp
     @Column(name = "fecha", updatable = false)
@@ -41,19 +42,17 @@ public class CotizacionVenta {
     @Column(name = "importe_iva")
     private Double importeIVA;
 
-    @Column(name = "gasto_traslado")
-    private Double precioTraslado;
-
     @Column(name = "gastos_administrativos")
     private Double gastosAdministrativos;
-
-    @Column(name = "gastos_garantia")
-    private Double gastosGarantia;
 
     @Column(name = "garantia_extendida")
     private Boolean garatiaExtendida;
 
     @Column(name = "total")
     private Double total;
+
+    @Column(name = "estado")
+    @Enumerated(EnumType.ORDINAL)
+    private EstadoCotizacion estadoCotizacion;
 
 }
