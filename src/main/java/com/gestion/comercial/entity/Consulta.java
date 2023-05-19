@@ -28,6 +28,9 @@ public class Consulta {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "mensaje")
+    private String mensaje;
+
     @CreationTimestamp
     @Column(name = "fecha", updatable = false)
     private Timestamp fecha;

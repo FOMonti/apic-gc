@@ -16,6 +16,7 @@ public class ConsultaMapper {
         consulta.setApellido(consultaRequest.getApellido());
         consulta.setEmail(consultaRequest.getEmail());
         consulta.setNumTelefono(consultaRequest.getNumTelefono());
+        consulta.setMensaje(consultaRequest.getMensaje());
         return consulta;
     }
 
@@ -27,6 +28,7 @@ public class ConsultaMapper {
         consultaResponse.setEmail(consulta.getEmail());
         consultaResponse.setNumTelefono(consulta.getNumTelefono());
         consultaResponse.setFecha(consulta.getFecha());
+        consultaResponse.setMensaje(consulta.getMensaje());
         return consultaResponse;
     }
 

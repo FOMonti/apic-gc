@@ -19,6 +19,8 @@ public class ConsultaResponse {
 
     private String email;
 
+    private String mensaje;
+
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fecha;
 }
