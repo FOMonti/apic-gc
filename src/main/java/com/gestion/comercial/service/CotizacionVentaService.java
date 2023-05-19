@@ -117,6 +117,9 @@ public class CotizacionVentaService {
     }
 
     public List<CotizacionVentaResponse> getAll(){
+        List<CotizacionVenta> cotizacionVentas = cotizacionVentaRepository.findAll();
+        List<CotizacionVentaResponse> cotizacionVentaResponses = cotizacionVentaMapper.cotizacionesVentaListAResponse(cotizacionVentaRepository.findAll());
+
         return cotizacionVentaMapper.cotizacionesVentaListAResponse(cotizacionVentaRepository.findAll());
     }
 }
