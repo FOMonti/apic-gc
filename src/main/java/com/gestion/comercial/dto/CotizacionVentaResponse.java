@@ -18,6 +18,7 @@ public class CotizacionVentaResponse {
 
     private String patente;
 
+    private String email;
     private String nombreCliente;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")

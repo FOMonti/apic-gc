@@ -16,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cotizaciones")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
 public class CotizacionVentaController {
 
     public static final String COTIZACIONES= "/cotizaciones";

@@ -29,6 +29,9 @@ public class CotizacionVenta {
     @Column(name = "patente", length = 7, nullable = false)
     private String patente;
 
+    @Column(name = "email", length = 20, nullable = false)
+    private String email;
+
     @Column(name = "nombre_cliente", length = 10, nullable = false)
     private String nombreCliente;
 
