@@ -2,9 +2,7 @@ package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
-import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.service.CotizacionVentaService;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -16,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/cotizaciones")
-@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
+//@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
 public class CotizacionVentaController {
 
     public static final String COTIZACIONES= "/cotizaciones";
