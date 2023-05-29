@@ -24,7 +24,7 @@ public class CotizacionVentaMapper {
         cotizacionVenta.setNombreCliente(cotizacionVentaRequest.getNombreCliente());
         cotizacionVenta.setPatente(cotizacionVentaRequest.getPatente());
         cotizacionVenta.setEmail(cotizacionVentaRequest.getEmail());
-        cotizacionVenta.setIdVendedor(cotizacionVentaRequest.getIdVendedor());
+        cotizacionVenta.setIdVendedor(cotizacionVentaRequest.getIdVendedor().intValue());
         cotizacionVenta.setGaratiaExtendida(cotizacionVentaRequest.getGarantiaExtendida());
         return cotizacionVenta;
     }
