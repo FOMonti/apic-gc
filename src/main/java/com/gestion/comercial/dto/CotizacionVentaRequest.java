@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Data
 public class CotizacionVentaRequest {
 
-    @Size(min = 1, max = 4, message = "El campo sucursal tiene un tamaño minimo de 1 y maximo de 15")
+    @Size(min = 3, max = 4, message = "El campo sucursal tiene un tamaño minimo de {min} y maximo de {max}")
     private String sucursal;
 
     @Size(max = 20, message = "El nombre del cliente debe tener como máximo {max} caracteres")
