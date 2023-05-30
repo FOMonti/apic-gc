@@ -9,9 +9,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebMvc
 public class RestCotizacionConfig {
 
-    @Bean
-    public RestTemplate restTemplate() {
+   @Bean
+   public RestTemplate restTemplate() {
         return new RestTemplate();
-    }
+   }
 
 }
