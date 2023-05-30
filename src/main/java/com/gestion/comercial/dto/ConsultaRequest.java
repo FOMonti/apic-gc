@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class ConsultaRequest {
 
-    @NotBlank(message = "El campo nombre no puede estar vacio")
+    @Size(min = 1, max = 20, message = "El campo nombre tiene un tamaño minimo de {min} y maximo de {max}")
     private String nombre;
 
     private String apellido;
