@@ -17,22 +17,22 @@ public class CotizacionVenta {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "sucursal", length = 5, nullable = false)
+    @Column(name = "sucursal", length = 4, nullable = false)
     private String sucursal;
 
     @Column(name = "numero_cotizacion", nullable = false)
     private Long numeroCotizacion;
 
-    @Column(name = "id_vendedor", nullable = false)
+    @Column(name = "id_vendedor", length = 5, nullable = false)
     private Integer idVendedor;
 
-    @Column(name = "patente", length = 7, nullable = false)
+    @Column(name = "patente", length = 10, nullable = false)
     private String patente;
 
-    @Column(name = "email", length = 20, nullable = false)
+    @Column(name = "email", length = 70, nullable = false)
     private String email;
 
-    @Column(name = "nombre_cliente", length = 10, nullable = false)
+    @Column(name = "nombre_cliente", length = 20, nullable = false)
     private String nombreCliente;
 
     @CreationTimestamp
