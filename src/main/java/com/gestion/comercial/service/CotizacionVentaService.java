@@ -17,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class CotizacionVentaService {
@@ -47,7 +46,7 @@ public class CotizacionVentaService {
         cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.PENDIENTE);
         cotizacionVentaRepository.save(cotizacionVenta);
         CotizacionVentaResponse cotizacionVentaResponse = cotizacionVentaMapper.cotizacionEntityAResponse(cotizacionVenta);
-        cotizacionVentaResponse.setGastoAdministrativos(gastoAdministrativos);
+        cotizacionVentaResponse.setGastosAdministrativos(gastoAdministrativos);
         gastoAdministrativos.forEach(gastoAdministrativo -> {
             gastoAdministrativo.setCotizacionVenta(cotizacionVenta);
             gastoAdministrativoRepository.save(gastoAdministrativo);
@@ -58,33 +57,28 @@ public class CotizacionVentaService {
 
     private void calcularPrecio(CotizacionVenta cotizacionVenta) {
         //Integración con el modulo de administraciíon --> Solicitar el vehiculo por la patente
-        Random random = new Random();
-        int importeAleatorio = random.nextInt(30) + 1;
-        int multiplicadorAleatorio = random.nextInt(3) + 1;
-        double importe = (1000000D * multiplicadorAleatorio);
-        importe+=importe*importeAleatorio/100;
-        cotizacionVenta.setPrecioBase(importe);
-        cotizacionVenta.setImporteIVA(importe*0.21);
+        cotizacionVenta.setImporteIVA(cotizacionVenta.getPrecioBase()*0.21);
     }
 
     private List<GastoAdministrativo> calcularGastosAdministrativos(CotizacionVenta cotizacionVenta) {
         List<GastoAdministrativo> gastoAdministrativos = new ArrayList<>();
         int linea = 1;
-        double gastoCotizacion = 0D;
+        double totalGastosAdministrativos = 0D;
         for(CostoAdministrativo costoAdministrativo : CostoAdministrativo.values()){
             GastoAdministrativo gastoAdministrativo = new GastoAdministrativo();
             gastoAdministrativo.setLinea(linea);
             gastoAdministrativo.setNombre(costoAdministrativo);
-            Double importe = costoAdministrativo.getValor();
+            double importe = cotizacionVenta.getPrecioBase() * costoAdministrativo.getPorcentaje() / 100;
             if(costoAdministrativo.equals(CostoAdministrativo.GARANTIA))
-                gastoAdministrativo.setImporte(cotizacionVenta.getGaratiaExtendida() ? importe * 2 : importe);
+                gastoAdministrativo.setImporte(Boolean.TRUE.equals(cotizacionVenta.getGaratiaExtendida()) ?
+                        importe * 2 : importe);
             else
                 gastoAdministrativo.setImporte(importe);
             linea++;
-            gastoCotizacion +=costoAdministrativo.getValor();
+            totalGastosAdministrativos +=importe;
             gastoAdministrativos.add(gastoAdministrativo);
         }
-        cotizacionVenta.setGastosAdministrativos(gastoCotizacion);
+        cotizacionVenta.setGastosAdministrativos(totalGastosAdministrativos);
         return gastoAdministrativos;
     }
 

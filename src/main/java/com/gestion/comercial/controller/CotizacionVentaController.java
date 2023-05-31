@@ -7,7 +7,6 @@ import com.gestion.comercial.service.CotizacionVentaService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +21,6 @@ import java.util.List;
 @RequestMapping("/cotizaciones")
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
 public class CotizacionVentaController {
-
-    public static final String COTIZACIONES= "/cotizaciones";
-
-    public static final String SAVE= "/save";
 
     private final CotizacionVentaService cotizacionVentaService;
 

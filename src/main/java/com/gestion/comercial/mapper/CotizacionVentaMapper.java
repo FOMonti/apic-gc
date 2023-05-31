@@ -25,6 +25,7 @@ public class CotizacionVentaMapper {
         cotizacionVenta.setPatente(cotizacionVentaRequest.getPatente());
         cotizacionVenta.setEmail(cotizacionVentaRequest.getEmail());
         cotizacionVenta.setIdVendedor(cotizacionVentaRequest.getIdVendedor().intValue());
+        cotizacionVenta.setPrecioBase(cotizacionVentaRequest.getPrecioBase().doubleValue());
         cotizacionVenta.setGaratiaExtendida(cotizacionVentaRequest.getGarantiaExtendida());
         return cotizacionVenta;
     }
@@ -41,7 +42,7 @@ public class CotizacionVentaMapper {
         cotizacionVentaResponse.setFecha(cotizacionVenta.getFecha());
         cotizacionVentaResponse.setPrecioBase(cotizacionVenta.getPrecioBase());
         cotizacionVentaResponse.setImporteIVA(cotizacionVenta.getImporteIVA());
-        cotizacionVentaResponse.setGastosAdministrativos(cotizacionVenta.getGastosAdministrativos());
+        cotizacionVentaResponse.setImporteTotalGastosAdministrativos(cotizacionVenta.getGastosAdministrativos());
         cotizacionVentaResponse.setGaratiaExtendida(cotizacionVenta.getGaratiaExtendida());
         cotizacionVentaResponse.setTotal(cotizacionVenta.getTotal());
         cotizacionVentaResponse.setEstadoCotizacion(cotizacionVenta.getEstadoCotizacion().name());
@@ -52,7 +53,7 @@ public class CotizacionVentaMapper {
         List<CotizacionVentaResponse> cotizacionesRet = new ArrayList<>();
         cotizaciones.forEach(cotizacion -> {
             CotizacionVentaResponse cotizacionVentaResponse = cotizacionEntityAResponse(cotizacion);
-            cotizacionVentaResponse.setGastoAdministrativos(gastoAdministrativoRepository.findAllByCotizacionVenta(cotizacion));
+            cotizacionVentaResponse.setGastosAdministrativos(gastoAdministrativoRepository.findAllByCotizacionVenta(cotizacion));
             cotizacionesRet.add(cotizacionVentaResponse);
         });
         return cotizacionesRet;

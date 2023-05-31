@@ -14,28 +14,28 @@ public class CotizacionVentaResponse {
 
     private Long numeroCotizacion;
 
+    private String estadoCotizacion;
+
     private Integer idVendedor;
-
-    private String patente;
-
-    private String email;
-    private String nombreCliente;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fecha;
+
+    private String nombreCliente;
+
+    private String email;
+
+    private String patente;
+
+    private Boolean garatiaExtendida;
 
     private Double precioBase;
 
     private Double importeIVA;
 
-    private Double gastosAdministrativos;
+    private List<GastoAdministrativo> gastosAdministrativos;
 
-    private Boolean garatiaExtendida;
+    private Double importeTotalGastosAdministrativos;
 
     private Double total;
-
-    private String estadoCotizacion;
-
-    private List<GastoAdministrativo> gastoAdministrativos;
-
 }
