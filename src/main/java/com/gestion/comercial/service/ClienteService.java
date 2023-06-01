@@ -33,7 +33,6 @@ public class ClienteService {
     }
     public ClienteResponse save(ClienteRequest clienteRequest){
         Cliente cliente = clienteMapper.clienteRequestAEntity(clienteRequest);
-        clienteRepository.save(cliente);
-        return clienteMapper.clienteEntityAResponse(cliente);
+        return clienteMapper.clienteEntityAResponse(clienteRepository.save(cliente));
     }
 }
