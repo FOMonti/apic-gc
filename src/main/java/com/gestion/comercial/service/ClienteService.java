@@ -1,5 +1,6 @@
 package com.gestion.comercial.service;
 
+import com.gestion.comercial.dto.ClienteRequest;
 import com.gestion.comercial.dto.ClienteResponse;
 import com.gestion.comercial.entity.Cliente;
 import com.gestion.comercial.mapper.ClienteMapper;
@@ -29,5 +30,10 @@ public class ClienteService {
     public Optional<ClienteResponse> getClienteByDni(String dni){
         return clienteRepository.getClienteByDni(dni)
                 .map(clienteMapper::clienteEntityAResponse);
+    }
+    public ClienteResponse save(ClienteRequest clienteRequest){
+        Cliente cliente = clienteMapper.clienteRequestAEntity(clienteRequest);
+        clienteRepository.save(cliente);
+        return clienteMapper.clienteEntityAResponse(cliente);
     }
 }
