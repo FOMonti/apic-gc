@@ -27,7 +27,7 @@ public class CotizacionVentaResponse {
 
     private String patente;
 
-    private Boolean garatiaExtendida;
+    private Boolean garantiaExtendida;
 
     private Double precioBase;
 

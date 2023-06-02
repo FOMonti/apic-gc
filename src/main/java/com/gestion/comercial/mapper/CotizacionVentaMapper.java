@@ -26,7 +26,7 @@ public class CotizacionVentaMapper {
         cotizacionVenta.setEmail(cotizacionVentaRequest.getEmail());
         cotizacionVenta.setIdVendedor(cotizacionVentaRequest.getIdVendedor().intValue());
         cotizacionVenta.setPrecioBase(cotizacionVentaRequest.getPrecioBase().doubleValue());
-        cotizacionVenta.setGaratiaExtendida(cotizacionVentaRequest.getGarantiaExtendida());
+        cotizacionVenta.setGaratiaExtendida(co  tizacionVentaRequest.getGarantiaExtendida());
         return cotizacionVenta;
     }
 
@@ -43,7 +43,7 @@ public class CotizacionVentaMapper {
         cotizacionVentaResponse.setPrecioBase(cotizacionVenta.getPrecioBase());
         cotizacionVentaResponse.setImporteIVA(cotizacionVenta.getImporteIVA());
         cotizacionVentaResponse.setImporteTotalGastosAdministrativos(cotizacionVenta.getGastosAdministrativos());
-        cotizacionVentaResponse.setGaratiaExtendida(cotizacionVenta.getGaratiaExtendida());
+        cotizacionVentaResponse.setGarantiaExtendida(cotizacionVenta.getGaratiaExtendida());
         cotizacionVentaResponse.setTotal(cotizacionVenta.getTotal());
         cotizacionVentaResponse.setEstadoCotizacion(cotizacionVenta.getEstadoCotizacion().name());
         return cotizacionVentaResponse;
