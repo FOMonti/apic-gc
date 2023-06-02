@@ -74,8 +74,6 @@ public class ClienteControllerTest {
         esperado.setEmail("juan.perez@gmail.com");
         esperado.setDireccion("Perez 1234");
 
-
-
         Mockito.when(clienteService.save(clienteMapper.clienteEntityARequest(esperado)))
                 .thenReturn(clienteMapper.clienteEntityAResponse(esperado));
 
@@ -89,10 +87,7 @@ public class ClienteControllerTest {
         ResultActions resultActions = mockMvc.perform(mockRequest);
 
         resultActions.andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.dni", "123"));
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.dni", is(esperado.getDni())));
-//        MockHttpServletResponse response = responseContent.andReturn().getResponse();
-//        System.out.println(response.getContentAsString());
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.dni").value(esperado.getDni()));
     }
 }
