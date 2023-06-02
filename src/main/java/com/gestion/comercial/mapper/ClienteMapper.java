@@ -29,6 +29,17 @@ public class ClienteMapper {
         return clientesRet;
     }
 
+    public ClienteRequest clienteEntityARequest(Cliente cliente){
+        ClienteRequest clienteRequest = new ClienteRequest();
+        clienteRequest.setDni(cliente.getDni());
+        clienteRequest.setNombre(cliente.getNombre());
+        clienteRequest.setApellido(cliente.getApellido());
+        clienteRequest.setNumTelefono(cliente.getNumTelefono());
+        clienteRequest.setEmail(cliente.getEmail());
+        clienteRequest.setDireccion(cliente.getDireccion());
+        return clienteRequest;
+    }
+
     public Cliente clienteRequestAEntity(ClienteRequest clienteRequest){
         Cliente cliente = new Cliente();
         cliente.setDni(clienteRequest.getDni());
