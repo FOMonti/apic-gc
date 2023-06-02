@@ -49,7 +49,7 @@ public class CotizacionVenta {
     private Double gastosAdministrativos;
 
     @Column(name = "garantia_extendida")
-    private Boolean garatiaExtendida;
+    private Boolean garantiaExtendida;
 
     @Column(name = "total")
     private Double total;

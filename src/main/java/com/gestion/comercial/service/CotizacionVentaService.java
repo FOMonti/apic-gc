@@ -70,7 +70,7 @@ public class CotizacionVentaService {
             gastoAdministrativo.setNombre(costoAdministrativo);
             double importe = cotizacionVenta.getPrecioBase() * costoAdministrativo.getPorcentaje() / 100;
             if(costoAdministrativo.equals(CostoAdministrativo.GARANTIA))
-                gastoAdministrativo.setImporte(Boolean.TRUE.equals(cotizacionVenta.getGaratiaExtendida()) ?
+                gastoAdministrativo.setImporte(Boolean.TRUE.equals(cotizacionVenta.getGarantiaExtendida()) ?
                         importe * 2 : importe);
             else
                 gastoAdministrativo.setImporte(importe);
