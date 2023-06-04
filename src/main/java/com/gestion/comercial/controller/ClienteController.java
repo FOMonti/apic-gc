@@ -1,9 +1,15 @@
 package com.gestion.comercial.controller;
 
+import com.gestion.comercial.dto.ClienteRequest;
 import com.gestion.comercial.dto.ClienteResponse;
+import com.gestion.comercial.dto.CustomErrorResponse;
 import com.gestion.comercial.service.ClienteService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,5 +46,14 @@ public class ClienteController {
         return clienteResponse.map(response ->
                 new ResponseEntity<>(response, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NO_CONTENT));
+    }
+
+    @PostMapping("/save")
+    @ApiResponse(responseCode = "201", description = "Cliente creado exitosamente",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ClienteResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
+    public ResponseEntity<ClienteResponse> saveCliente(@Valid @RequestBody ClienteRequest clienteRequest){
+        return new ResponseEntity<>(clienteService.save(clienteRequest), HttpStatus.CREATED);
     }
 }
