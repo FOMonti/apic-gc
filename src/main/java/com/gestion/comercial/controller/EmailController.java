@@ -1,11 +1,14 @@
 package com.gestion.comercial.controller;
 
 import com.gestion.comercial.service.EmailService;
+import com.itextpdf.text.DocumentException;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @Tag(name = "Email", description = "Endpoints para operaciones de envío de emails")
 @RestController
@@ -23,8 +26,8 @@ public class EmailController {
     @PostMapping("/enviar-pdf")
     public ResponseEntity<String> enviarPDF(@RequestParam String emailReceptor, @RequestParam Long idCotizacionVenta){
         try {
-            emailService.enviarCorreo(emailReceptor,idCotizacionVenta);
-        }catch (Exception e){
+            emailService.enviarCotizacion(emailReceptor,idCotizacionVenta);
+        }catch (DocumentException | IOException e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar el PDF por correo electrónico.");
         }
         return ResponseEntity.ok().build();
