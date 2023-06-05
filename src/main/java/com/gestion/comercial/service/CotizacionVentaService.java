@@ -4,6 +4,7 @@ import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
+import com.gestion.comercial.exception.CotizacionVentaException;
 import com.gestion.comercial.mapper.CotizacionVentaMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
@@ -17,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CotizacionVentaService {
@@ -111,5 +113,33 @@ public class CotizacionVentaService {
 
     public List<CotizacionVentaResponse> getAll(){
         return cotizacionVentaMapper.cotizacionesVentaListAResponse(cotizacionVentaRepository.findAll());
+    }
+
+    public Optional<CotizacionVentaResponse> getCotizacionById(Long id){
+        Optional<CotizacionVenta> cotizacionVentaOptional = cotizacionVentaRepository.findById(id);
+        CotizacionVentaResponse cotizacionVentaResponse = null;
+        if(cotizacionVentaOptional.isPresent()){
+            cotizacionVentaResponse = cotizacionVentaMapper.cotizacionEntityAResponse(cotizacionVentaOptional.get());
+            cotizacionVentaResponse.setGastosAdministrativos(gastoAdministrativoRepository.findAllByCotizacionVenta(cotizacionVentaOptional.get()));
+        }
+        return Optional.ofNullable(cotizacionVentaResponse);
+    }
+
+    public Optional<CotizacionVentaResponse> anularCotizacion(Long id) {
+        Optional<CotizacionVenta> cotizacionVentaOptional = cotizacionVentaRepository.findById(id);
+        CotizacionVentaResponse cotizacionVentaResponse = null;
+        if(cotizacionVentaOptional.isPresent()){
+            CotizacionVenta cotizacionVenta = cotizacionVentaOptional.get();
+            if(cotizacionVenta.getEstadoCotizacion().equals(EstadoCotizacion.PAGADA)){
+                throw new CotizacionVentaException("No se puede anular la cotización ya que la misma esta en estado: PAGADA",
+                        "/cotizaciones/anular/{id}");
+            }else{
+                cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.ANULADO);
+                cotizacionVentaRepository.save(cotizacionVenta);
+            }
+            cotizacionVentaResponse = cotizacionVentaMapper.cotizacionEntityAResponse(cotizacionVenta);
+            cotizacionVentaResponse.setGastosAdministrativos(gastoAdministrativoRepository.findAllByCotizacionVenta(cotizacionVentaOptional.get()));
+        }
+        return Optional.ofNullable(cotizacionVentaResponse);
     }
 }

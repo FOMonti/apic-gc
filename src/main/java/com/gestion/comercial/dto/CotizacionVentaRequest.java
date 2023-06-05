@@ -16,8 +16,7 @@ public class CotizacionVentaRequest {
     @Pattern(regexp = "^[a-zA-Z\\s]+$", message = "El nombre del cliente solo puede contener letras y espacios")
     private String nombreCliente;
 
-    @Size(min = 7, max = 10, message = "La patente tiene un tamaño minimo de {min} y maximo de {max} caracteres")
-    @Pattern(regexp = "^([A-Z]{2,3}-\\d{3}(?:-[A-Z]{2})?)$", message = "La patente no tiene un formato válido. Los formatos validos son: 'AAA-123' o 'AA-123-BB'")
+    @Size(min = 6, max = 10, message = "La patente tiene un tamaño minimo de {min} y maximo de {max} caracteres")
     private String patente;
 
     @Email(message = "El formato del email no es valido")
