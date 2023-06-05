@@ -42,11 +42,8 @@ public class ReservaController {
 
     @GetMapping("/vehiculos")
     public ResponseEntity<Vehicle> getVehiculo(@RequestParam String patente){
-        Optional<Vehicle> vehicle = vehiculoService.getVehicleByPlate(patente);
-        if(vehicle.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(vehicle.get(),HttpStatus.OK);
+        Vehicle vehicle = vehiculoService.getVehicleByPlate(patente);
+        return new ResponseEntity<>(vehicle,HttpStatus.OK);
     }
 
     @PostMapping("/save")

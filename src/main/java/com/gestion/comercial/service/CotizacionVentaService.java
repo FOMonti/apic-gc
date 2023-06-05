@@ -4,7 +4,7 @@ import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
-import com.gestion.comercial.exception.EntityNotExistException;
+import com.gestion.comercial.exception.ValidationException;
 import com.gestion.comercial.mapper.CotizacionVentaMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
@@ -128,7 +128,7 @@ public class CotizacionVentaService {
         if(cotizacionVentaOptional.isPresent()){
             CotizacionVenta cotizacionVenta = cotizacionVentaOptional.get();
             if(cotizacionVenta.getEstadoCotizacion().equals(EstadoCotizacion.PAGADA)){
-                throw new EntityNotExistException("No se puede anular la cotización ya que la misma esta en estado: PAGADA",
+                throw new ValidationException("No se puede anular la cotización ya que la misma esta en estado: PAGADA",
                         "/cotizaciones/anular/{id}");
             }else{
                 cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.ANULADO);

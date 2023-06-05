@@ -2,7 +2,7 @@ package com.gestion.comercial.service;
 
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
-import com.gestion.comercial.exception.EntityNotExistException;
+import com.gestion.comercial.exception.ValidationException;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.PdfPCell;
@@ -51,7 +51,7 @@ public class PDFService {
     private PdfPTable crearTablaCotizacion(CotizacionVenta cotizacionVenta){
         List<GastoAdministrativo> gastosAdministrativos = gastoAdministrativoRepository.findAllByCotizacionVenta(cotizacionVenta);
         if(gastosAdministrativos.isEmpty()){
-            throw new EntityNotExistException("No existen gastos administrativos para la cotización de venta con el id: " +
+            throw new ValidationException("No existen gastos administrativos para la cotización de venta con el id: " +
                     cotizacionVenta.getId(), "/email/enviar-pdf");
         }
         PdfPTable table = new PdfPTable(2);
