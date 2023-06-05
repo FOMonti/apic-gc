@@ -1,6 +1,7 @@
 package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.ClienteRequest;
+import com.gestion.comercial.dto.ClienteResponse;
 import com.gestion.comercial.dto.ReservaResponse;
 import com.gestion.comercial.dto.Vehicle;
 import com.gestion.comercial.entity.Cliente;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,18 +25,18 @@ public class ReservaService {
     private final ClienteService clienteService;
     private final ClienteMapper clienteMapper;
     private final VehiculoService vehiculoService;
-    private final ReservaRepository revisionRepository;
+    private final ReservaRepository reservaRepository;
     private final ReservaMapper reservaMapper;
     private final ClienteRepository clienteRepository;
 
     @Autowired
     public ReservaService(ClienteService clienteService, ClienteMapper clienteMapper,
-                          VehiculoService vehiculoService, ReservaRepository revisionRepository,
+                          VehiculoService vehiculoService, ReservaRepository reservaRepository,
                           ReservaMapper reservaMapper, ClienteRepository clienteRepository){
         this.clienteService = clienteService;
         this.clienteMapper = clienteMapper;
         this.vehiculoService = vehiculoService;
-        this.revisionRepository = revisionRepository;
+        this.reservaRepository = reservaRepository;
         this.reservaMapper = reservaMapper;
         this.clienteRepository = clienteRepository;
     }
@@ -54,12 +56,42 @@ public class ReservaService {
         reserva.setFechaVencimientoPago(fechaActual.plusDays(2));
         reserva.setPatente(patente);
         reserva.setImporte(vehicle.getBasePrice() * 0.15);
-        reserva = revisionRepository.save(reserva);
+        reserva = reservaRepository.save(reserva);
         ReservaResponse reservaResponse = reservaMapper.entityAResponse(reserva);
-        reservaResponse.setClienteRequest(clienteRequest);
+        reservaResponse.setClienteResponse(clienteMapper.clienteEntityAResponse(cliente));
         vehiculoService.reservarVehiculo(patente, "RESERVADO");
         return reservaResponse;
     }
 
 
+    public List<ReservaResponse> getAll() {
+        return reservaMapper.entityAResponseList(reservaRepository.findAll());
+    }
+
+    public Optional<ReservaResponse> getReservaById(Long id) {
+        Optional<Reserva> reservaOptional = reservaRepository.findById(id);
+        ReservaResponse reservaResponse = null;
+        if(reservaOptional.isPresent()){
+            Reserva reserva = reservaOptional.get();
+            Optional<ClienteResponse> clienteResponse = clienteService.getClienteByDni(reserva.getClienteDni());
+            reservaResponse = reservaMapper.entityAResponse(reserva);
+            reservaResponse.setClienteResponse(clienteResponse.orElseThrow(() -> new ValidationException("Cliente no encontrado","")));
+        }
+        return Optional.ofNullable(reservaResponse);
+    }
+
+    public Optional<ReservaResponse> anularCotizacion(Long id) {
+        Optional<Reserva> reservaOptional =reservaRepository.findById(id);
+        if(reservaOptional.isPresent()){
+            Reserva reserva = reservaOptional.get();
+            if(reserva.getEstadoReserva().equals(EstadoReserva.PAGADA)){
+                throw new ValidationException("No se puede anular la reserva ya que la misma esta en estado: PAGADA",
+                        "/reservas/anular/{id}");
+            }else{
+                reserva.setEstadoReserva(EstadoReserva.ANULADA);
+                reservaRepository.save(reserva);
+            }
+        }
+        return getReservaById(id);
+    }
 }

@@ -62,7 +62,7 @@ public class CotizacionVentaController {
     }
 
     @GetMapping("/{id}")
-    @ApiResponse(responseCode = "200", description = "Cotizaciones encontradas",
+    @ApiResponse(responseCode = "200", description = "Cotización encontrada",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = CotizacionVentaResponse.class)))
     @ApiResponse(responseCode = "404", description = "No se encontró la cotizacón de venta", content = @Content)
     public ResponseEntity<CotizacionVentaResponse> getById(@PathVariable Long id) {

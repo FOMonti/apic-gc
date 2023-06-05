@@ -26,5 +26,5 @@ public class ReservaResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fechaCreacion;
 
-    private ClienteRequest clienteRequest;
+    private ClienteResponse clienteResponse;
 }
