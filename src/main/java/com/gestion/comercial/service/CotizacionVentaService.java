@@ -4,7 +4,7 @@ import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
-import com.gestion.comercial.exception.CotizacionVentaException;
+import com.gestion.comercial.exception.EntityNotExistException;
 import com.gestion.comercial.mapper.CotizacionVentaMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,15 +25,13 @@ public class CotizacionVentaService {
     private final CotizacionVentaMapper cotizacionVentaMapper;
     private final CotizacionVentaRepository cotizacionVentaRepository;
     private final GastoAdministrativoRepository gastoAdministrativoRepository;
-    private final RestTemplate restTemplate;
 
     @Autowired
-    public CotizacionVentaService(CotizacionVentaMapper cotizacionVentaMapper, RestTemplate restTemplate,
+    public CotizacionVentaService(CotizacionVentaMapper cotizacionVentaMapper,
                                   CotizacionVentaRepository cotizacionVentaRepository,
                                   GastoAdministrativoRepository gastoAdministrativoRepository){
         this.cotizacionVentaMapper=cotizacionVentaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
-        this.restTemplate = restTemplate;
         this.gastoAdministrativoRepository = gastoAdministrativoRepository;
     }
 
@@ -131,7 +128,7 @@ public class CotizacionVentaService {
         if(cotizacionVentaOptional.isPresent()){
             CotizacionVenta cotizacionVenta = cotizacionVentaOptional.get();
             if(cotizacionVenta.getEstadoCotizacion().equals(EstadoCotizacion.PAGADA)){
-                throw new CotizacionVentaException("No se puede anular la cotización ya que la misma esta en estado: PAGADA",
+                throw new EntityNotExistException("No se puede anular la cotización ya que la misma esta en estado: PAGADA",
                         "/cotizaciones/anular/{id}");
             }else{
                 cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.ANULADO);

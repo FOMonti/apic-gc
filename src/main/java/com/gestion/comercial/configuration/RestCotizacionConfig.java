@@ -18,8 +18,8 @@ public class RestCotizacionConfig {
    public RestTemplate restTemplate() {
         return new RestTemplate();
    }
-    @Bean
-    public SendGrid sendGrid() {
-        return new SendGrid(sendGridApiKey);
-    }
+   @Bean
+   public SendGrid sendGrid() {
+       return new SendGrid(sendGridApiKey);
+   }
 }

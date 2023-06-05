@@ -1,7 +1,7 @@
 package com.gestion.comercial.service;
 
 import com.gestion.comercial.entity.CotizacionVenta;
-import com.gestion.comercial.exception.CotizacionVentaException;
+import com.gestion.comercial.exception.EntityNotExistException;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.itextpdf.text.*;
 import com.sendgrid.Method;
@@ -35,7 +35,7 @@ public class EmailService {
     public void enviarCotizacion(String emailReceptor, Long idCotizacionVenta)
             throws DocumentException, IOException {
         CotizacionVenta cotizacionVenta = cotizacionVentaRepository.findById(idCotizacionVenta)
-                .orElseThrow(() -> new CotizacionVentaException("No existe una cotización de venta con el id: " +
+                .orElseThrow(() -> new EntityNotExistException("No existe una cotización de venta con el id: " +
                         idCotizacionVenta, "/email/enviar-pdf"));
         Mail mail = crearMailCotizacion(emailReceptor, cotizacionVenta);
         enviarCorreo(mail);

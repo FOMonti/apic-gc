@@ -2,7 +2,7 @@ package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.CustomErrorResponse;
 import com.gestion.comercial.dto.ValidationError;
-import com.gestion.comercial.exception.CotizacionVentaException;
+import com.gestion.comercial.exception.EntityNotExistException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -44,9 +44,9 @@ public class ValidationExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
-    @ExceptionHandler({CotizacionVentaException.class})
+    @ExceptionHandler({EntityNotExistException.class})
     @ResponseBody
-    public ResponseEntity<CustomErrorResponse> cotizacionNoExiste(CotizacionVentaException ex) {
+    public ResponseEntity<CustomErrorResponse> cotizacionNoExiste(EntityNotExistException ex) {
 
         CustomErrorResponse response = new CustomErrorResponse();
         response.setTimestamp(LocalDateTime.now());
