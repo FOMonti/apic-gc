@@ -4,6 +4,7 @@ import com.gestion.comercial.dto.ClienteResponse;
 import com.gestion.comercial.dto.CustomErrorResponse;
 import com.gestion.comercial.service.EmailService;
 import com.itextpdf.text.DocumentException;
+import com.sendgrid.Response;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,12 +35,13 @@ public class EmailController {
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
-    public ResponseEntity<String> enviarPDF(@RequestParam String emailReceptor, @RequestParam Long idCotizacionVenta){
+    public ResponseEntity<?> enviarPDF(@RequestParam String emailReceptor, @RequestParam Long idCotizacionVenta){
+        Response response;
         try {
-            emailService.enviarCotizacion(emailReceptor,idCotizacionVenta);
+            response = emailService.enviarCotizacion(emailReceptor,idCotizacionVenta);
         }catch (DocumentException | IOException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar el PDF por correo electrónico.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al enviar email");
         }
-        return ResponseEntity.ok().body("Email enviado exitosamente");
+        return ResponseEntity.ok().body(response);
     }
 }

@@ -6,6 +6,7 @@ import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.itextpdf.text.*;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
+import com.sendgrid.Response;
 import com.sendgrid.SendGrid;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
@@ -32,21 +33,21 @@ public class EmailService {
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.pdfService = pdfService;
     }
-    public void enviarCotizacion(String emailReceptor, Long idCotizacionVenta)
+    public Response enviarCotizacion(String emailReceptor, Long idCotizacionVenta)
             throws DocumentException, IOException {
         CotizacionVenta cotizacionVenta = cotizacionVentaRepository.findById(idCotizacionVenta)
                 .orElseThrow(() -> new ValidationException("No existe una cotización de venta con el id: " +
                         idCotizacionVenta, "/email/enviar-pdf"));
         Mail mail = crearMailCotizacion(emailReceptor, cotizacionVenta);
-        enviarCorreo(mail);
+        return enviarCorreo(mail);
     }
 
-    private void enviarCorreo(Mail mail) throws IOException{
+    private Response enviarCorreo(Mail mail) throws IOException{
         Request request = new Request();
         request.setMethod(Method.POST);
         request.setEndpoint("mail/send");
         request.setBody(mail.build());
-        sendGrid.api(request);
+        return sendGrid.api(request);
     }
 
     private Mail crearMailCotizacion(String emailReceptor, CotizacionVenta cotizacionVenta)
