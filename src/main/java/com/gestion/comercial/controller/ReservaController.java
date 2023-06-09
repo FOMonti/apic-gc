@@ -24,30 +24,11 @@ import java.util.Optional;
 @CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.DELETE, RequestMethod.PUT})
 public class ReservaController {
 
-    private final MovimientosService movimientosService;
     private final ReservaService reservaService;
-    private final VehiculoService vehiculoService;
 
     @Autowired
-    public ReservaController(MovimientosService movimientosService,ReservaService reservaService, VehiculoService vehiculoService){
-        this.movimientosService = movimientosService;
+    public ReservaController(ReservaService reservaService){
         this.reservaService = reservaService;
-        this.vehiculoService = vehiculoService;
-    }
-
-    @GetMapping("/movimientos")
-    public ResponseEntity<List<MovimientoBancario>> getMovimientos(){
-        List<MovimientoBancario> movimientoBancarios = movimientosService.movimientoBancarios();
-        if(movimientoBancarios.isEmpty()){
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(movimientoBancarios,HttpStatus.OK);
-    }
-
-    @GetMapping("/vehiculos")
-    public ResponseEntity<Vehicle> getVehiculo(@RequestParam String patente){
-        Vehicle vehicle = vehiculoService.getVehicleByPlate(patente);
-        return new ResponseEntity<>(vehicle,HttpStatus.OK);
     }
 
     @PostMapping("/save")
