@@ -18,11 +18,8 @@ public class Reserva {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "cliente_dni", length = 8, nullable = false)
-    private String clienteDni;
-
     @ManyToOne
-    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
+    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni")
     private Cliente cliente;
 
     @Column(name = "patente", length = 10, nullable = false)

@@ -15,6 +15,7 @@ import com.gestion.comercial.types.EstadoReserva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,29 +29,40 @@ public class ReservaService {
     private final ReservaRepository reservaRepository;
     private final ReservaMapper reservaMapper;
     private final ClienteRepository clienteRepository;
+    private final UtilService utilService;
 
     @Autowired
     public ReservaService(ClienteService clienteService, ClienteMapper clienteMapper,
                           VehiculoService vehiculoService, ReservaRepository reservaRepository,
-                          ReservaMapper reservaMapper, ClienteRepository clienteRepository){
+                          ReservaMapper reservaMapper, ClienteRepository clienteRepository,
+                          UtilService utilService){
         this.clienteService = clienteService;
         this.clienteMapper = clienteMapper;
         this.vehiculoService = vehiculoService;
         this.reservaRepository = reservaRepository;
         this.reservaMapper = reservaMapper;
         this.clienteRepository = clienteRepository;
+        this.utilService = utilService;
     }
 
     public ReservaResponse save(ClienteRequest clienteRequest, String patente) {
+        Optional<Cliente> clienteOp = clienteRepository.getClienteByDni(clienteRequest.getDni());
+        Timestamp fechaAux = null;
+        if(clienteOp.isPresent()){
+            fechaAux = clienteOp.get().getFecha();
+        }
         LocalDate fechaActual = LocalDate.now();
         Cliente cliente = clienteMapper.clienteRequestAEntity(clienteRequest);
         Vehicle vehicle = vehiculoService.getVehicleByPlate(patente);
         if(!vehicle.getStatus().equals("DISPONIBLE")){
             throw new ValidationException("Para reservar un auto este tiene que estar DISPONIBLE", "/reservas/save");
         }
-        clienteRepository.save(cliente);
+        cliente = clienteRepository.save(cliente);
+        if(fechaAux != null){
+            cliente.setFecha(fechaAux);
+        }
         Reserva reserva = new Reserva();
-        reserva.setClienteDni(cliente.getDni());
+        reserva.setCliente(cliente);
         reserva.setEstadoReserva(EstadoReserva.PENDIENTE);
         reserva.setFechaVencimiento(fechaActual.plusDays(15));
         reserva.setFechaVencimientoPago(fechaActual.plusDays(2));
@@ -76,10 +88,7 @@ public class ReservaService {
         Optional<Reserva> reservaOptional = reservaRepository.findById(id);
         ReservaResponse reservaResponse = null;
         if(reservaOptional.isPresent()){
-            Reserva reserva = reservaOptional.get();
-            Optional<ClienteResponse> clienteResponse = clienteService.getClienteByDni(reserva.getClienteDni());
-            reservaResponse = reservaMapper.entityAResponse(reserva);
-            reservaResponse.setClienteResponse(clienteResponse.orElseThrow(() -> new ValidationException("Cliente no encontrado","")));
+            reservaResponse = reservaMapper.entityAResponse(reservaOptional.get());
         }
         return Optional.ofNullable(reservaResponse);
     }

@@ -21,7 +21,7 @@ public class CotizacionVentaResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fecha;
 
-    private String dni;
+    private ClienteResponse cliente;
 
     private String patente;
 

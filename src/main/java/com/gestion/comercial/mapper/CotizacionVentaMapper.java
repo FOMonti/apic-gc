@@ -13,16 +13,16 @@ import java.util.List;
 @Component
 public class CotizacionVentaMapper {
     private final GastoAdministrativoRepository gastoAdministrativoRepository;
+    private final ClienteMapper clienteMapper;
     @Autowired
-    public CotizacionVentaMapper(GastoAdministrativoRepository gastoAdministrativoRepository){
+    public CotizacionVentaMapper(GastoAdministrativoRepository gastoAdministrativoRepository, ClienteMapper clienteMapper){
         this.gastoAdministrativoRepository = gastoAdministrativoRepository;
-
+        this.clienteMapper = clienteMapper;
     }
     public CotizacionVenta cotizacionRequestAEntity(CotizacionVentaRequest cotizacionVentaRequest) {
         CotizacionVenta cotizacionVenta = new CotizacionVenta();
         cotizacionVenta.setSucursal(cotizacionVentaRequest.getSucursal());
         cotizacionVenta.setPatente(cotizacionVentaRequest.getPatente());
-        cotizacionVenta.setClienteDni(cotizacionVentaRequest.getDni());
         cotizacionVenta.setIdVendedor(cotizacionVentaRequest.getIdVendedor().intValue());
         cotizacionVenta.setGarantiaExtendida(cotizacionVentaRequest.getGarantiaExtendida());
         return cotizacionVenta;
@@ -35,7 +35,7 @@ public class CotizacionVentaMapper {
         cotizacionVentaResponse.setNumeroCotizacion(cotizacionVenta.getNumeroCotizacion());
         cotizacionVentaResponse.setIdVendedor(cotizacionVenta.getIdVendedor());
         cotizacionVentaResponse.setPatente(cotizacionVenta.getPatente());
-        cotizacionVentaResponse.setDni(cotizacionVenta.getClienteDni());
+        cotizacionVentaResponse.setCliente(clienteMapper.clienteEntityAResponse(cotizacionVenta.getCliente()));
         cotizacionVentaResponse.setFecha(cotizacionVenta.getFecha());
         cotizacionVentaResponse.setPrecioVenta(cotizacionVenta.getPrecioVenta());
         cotizacionVentaResponse.setImporteIVA(cotizacionVenta.getImporteIVA());

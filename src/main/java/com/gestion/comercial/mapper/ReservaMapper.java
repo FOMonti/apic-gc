@@ -36,16 +36,14 @@ public class ReservaMapper {
         reservaResponse.setFechaVencimiento(reserva.getFechaVencimiento());
         reservaResponse.setEstadoReserva(reserva.getEstadoReserva());
         reservaResponse.setFechaVencimientoPago(reserva.getFechaVencimientoPago());
+        reservaResponse.setClienteResponse(clienteMapper.clienteEntityAResponse(reserva.getCliente()));
         return reservaResponse;
     }
 
     public List<ReservaResponse> entityAResponseList(List<Reserva> reservas) {
         List<ReservaResponse> reservaResponses = new ArrayList<>();
         reservas.forEach(reserva -> {
-            ReservaResponse response = entityAResponse(reserva);
-            Optional<ClienteResponse> clienteResponse = clienteService.getClienteByDni(reserva.getClienteDni());
-            response.setClienteResponse(clienteResponse.orElseThrow(() -> new ValidationException("Cliente no encontrado","")));
-            reservaResponses.add(response);
+            reservaResponses.add(entityAResponse(reserva));
         });
         return reservaResponses;
     }

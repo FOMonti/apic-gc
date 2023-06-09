@@ -29,11 +29,8 @@ public class CotizacionVenta {
     @Column(name = "patente", length = 10, nullable = false)
     private String patente;
 
-    @Column(name = "cliente_dni", length = 8, nullable = false)
-    private String clienteDni;
-
     @ManyToOne
-    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
+    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni")
     private Cliente cliente;
 
     @CreationTimestamp

@@ -28,7 +28,7 @@ public class UtilService {
                 ("No se encontró una cotización de venta con el ID:{" + id +"}", ruta));
     }
 
-    protected Cliente orElseThrow(String dni, String ruta){
+    public Cliente orElseThrow(String dni, String ruta){
         Optional<Cliente> cliente = clienteRepository.getClienteByDni(dni);
         return cliente.orElseThrow(() -> new ValidationException
                 ("No se encontró un cliente con el dni:{" + dni + "}", ruta));

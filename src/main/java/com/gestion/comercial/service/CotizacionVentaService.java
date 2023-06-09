@@ -3,9 +3,11 @@ package com.gestion.comercial.service;
 import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
 import com.gestion.comercial.dto.Vehicle;
+import com.gestion.comercial.entity.Cliente;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
 import com.gestion.comercial.exception.ValidationException;
+import com.gestion.comercial.mapper.ClienteMapper;
 import com.gestion.comercial.mapper.CotizacionVentaMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
@@ -28,24 +30,27 @@ public class CotizacionVentaService {
     private final GastoAdministrativoRepository gastoAdministrativoRepository;
     private final UtilService utilService;
     private final VehiculoService vehiculoService;
+    private final ClienteMapper clienteMapper;
 
     @Autowired
     public CotizacionVentaService(CotizacionVentaMapper cotizacionVentaMapper,
                                   CotizacionVentaRepository cotizacionVentaRepository,
                                   GastoAdministrativoRepository gastoAdministrativoRepository,
-                                  UtilService utilService,VehiculoService vehiculoService){
+                                  UtilService utilService,VehiculoService vehiculoService, ClienteMapper clienteMapper){
         this.cotizacionVentaMapper=cotizacionVentaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.gastoAdministrativoRepository = gastoAdministrativoRepository;
         this.utilService = utilService;
         this.vehiculoService = vehiculoService;
+        this.clienteMapper = clienteMapper;
     }
 
     public CotizacionVentaResponse save(CotizacionVentaRequest cotizacionVentaRequest){
-        utilService.orElseThrow(cotizacionVentaRequest.getDni(),"/cotizaciones/save");
-        CotizacionVenta cotizacionVenta = cotizacionVentaMapper.cotizacionRequestAEntity(cotizacionVentaRequest);
-        cotizacionVenta.setNumeroCotizacion(numeroCotizacion(cotizacionVenta.getSucursal()));
         Vehicle vehicle = vehiculoService.getVehicleByPlate(cotizacionVentaRequest.getPatente());
+        Cliente cliente= utilService.orElseThrow(cotizacionVentaRequest.getDni(),"/cotizaciones/save");
+        CotizacionVenta cotizacionVenta = cotizacionVentaMapper.cotizacionRequestAEntity(cotizacionVentaRequest);
+        cotizacionVenta.setCliente(cliente);
+        cotizacionVenta.setNumeroCotizacion(numeroCotizacion(cotizacionVenta.getSucursal()));
         cotizacionVenta.setPrecioVenta(vehicle.getSellPrice());
         calcularPrecio(cotizacionVenta);
         List<GastoAdministrativo> gastoAdministrativos = calcularGastosAdministrativos(cotizacionVenta);
@@ -59,7 +64,6 @@ public class CotizacionVentaService {
             gastoAdministrativo.setCotizacionVenta(cotizacionVenta);
             gastoAdministrativoRepository.save(gastoAdministrativo);
         } );
-
         return cotizacionVentaResponse;
     }
 
