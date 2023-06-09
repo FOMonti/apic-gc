@@ -1,4 +1,4 @@
-package com.gestion.comercial.types.service;
+package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.ClienteRequest;
 import com.gestion.comercial.dto.ClienteResponse;

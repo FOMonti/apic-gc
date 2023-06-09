@@ -1,7 +1,7 @@
 package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.FacturaResponse;
-import com.gestion.comercial.types.service.FacturaService;
+import com.gestion.comercial.service.FacturaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

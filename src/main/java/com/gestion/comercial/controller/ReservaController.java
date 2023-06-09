@@ -1,9 +1,9 @@
 package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.*;
-import com.gestion.comercial.types.service.MovimientosService;
-import com.gestion.comercial.types.service.ReservaService;
-import com.gestion.comercial.types.service.VehiculoService;
+import com.gestion.comercial.service.MovimientosService;
+import com.gestion.comercial.service.ReservaService;
+import com.gestion.comercial.service.VehiculoService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

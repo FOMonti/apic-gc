@@ -3,7 +3,7 @@ package com.gestion.comercial.controller;
 import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
 import com.gestion.comercial.dto.CustomErrorResponse;
-import com.gestion.comercial.types.service.CotizacionVentaService;
+import com.gestion.comercial.service.CotizacionVentaService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

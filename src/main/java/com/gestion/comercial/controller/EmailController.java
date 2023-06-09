@@ -1,7 +1,7 @@
 package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.CustomErrorResponse;
-import com.gestion.comercial.types.service.EmailService;
+import com.gestion.comercial.service.EmailService;
 import com.itextpdf.text.DocumentException;
 import com.sendgrid.Response;
 import io.swagger.v3.oas.annotations.media.Content;

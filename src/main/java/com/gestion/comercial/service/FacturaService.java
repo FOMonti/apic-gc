@@ -1,4 +1,4 @@
-package com.gestion.comercial.types.service;
+package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.FacturaResponse;
 import com.gestion.comercial.entity.CotizacionVenta;
