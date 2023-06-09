@@ -82,7 +82,7 @@ public class CotizacionVentaService {
         List<Reserva> reservas = reservaService.getAllByClienteAndPagada(cotizacionVentaResponse.getCliente()
                 .getDni());
         cotizacionVentaResponse.setImporteReserva(0D);
-        cotizacionVentaResponse.setTotalMenosReserva(0D);
+        cotizacionVentaResponse.setTotalMenosReserva(cotizacionVentaResponse.getTotal());
         if(!reservas.isEmpty()){
             Reserva reserva = reservas.get(0);
             cotizacionVentaResponse.setImporteReserva(reserva.getImporte());
