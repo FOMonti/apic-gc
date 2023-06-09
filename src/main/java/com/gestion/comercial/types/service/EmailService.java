@@ -1,4 +1,4 @@
-package com.gestion.comercial.service;
+package com.gestion.comercial.types.service;
 
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.exception.ValidationException;

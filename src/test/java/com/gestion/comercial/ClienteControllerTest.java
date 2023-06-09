@@ -6,6 +6,7 @@ import com.gestion.comercial.controller.ClienteController;
 import com.gestion.comercial.entity.Cliente;
 import com.gestion.comercial.mapper.ClienteMapper;
 import com.gestion.comercial.repository.ClienteRepository;
+import com.gestion.comercial.types.service.ClienteService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -44,7 +45,7 @@ public class ClienteControllerTest {
     private ClienteRepository clienteController;
 
     @MockBean
-    private com.gestion.comercial.service.ClienteService clienteService;
+    private ClienteService clienteService;
 
 //    @BeforeEach
 //    public void setUp(){

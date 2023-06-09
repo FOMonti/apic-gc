@@ -1,4 +1,4 @@
-package com.gestion.comercial.service;
+package com.gestion.comercial.types.service;
 
 import com.gestion.comercial.dto.ClienteRequest;
 import com.gestion.comercial.dto.ClienteResponse;
@@ -55,7 +55,7 @@ public class ReservaService {
         reserva.setFechaVencimiento(fechaActual.plusDays(15));
         reserva.setFechaVencimientoPago(fechaActual.plusDays(2));
         reserva.setPatente(patente);
-        reserva.setImporte(vehicle.getBasePrice() * 0.15);
+        reserva.setImporte(vehicle.getBasePrice() * 0.02);
         reserva = reservaRepository.save(reserva);
         ReservaResponse reservaResponse = reservaMapper.entityAResponse(reserva);
         reservaResponse.setClienteResponse(clienteMapper.clienteEntityAResponse(cliente));
@@ -66,6 +66,10 @@ public class ReservaService {
 
     public List<ReservaResponse> getAll() {
         return reservaMapper.entityAResponseList(reservaRepository.findAll());
+    }
+
+    public List<Reserva> getAllByClienteAndPagada(String dni) {
+        return reservaRepository.findReservaByClienteDniAndEstadoReservaOrderByImporteDesc(dni, EstadoReserva.PAGADA);
     }
 
     public Optional<ReservaResponse> getReservaById(Long id) {

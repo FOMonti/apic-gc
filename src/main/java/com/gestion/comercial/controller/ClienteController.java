@@ -3,7 +3,7 @@ package com.gestion.comercial.controller;
 import com.gestion.comercial.dto.ClienteRequest;
 import com.gestion.comercial.dto.ClienteResponse;
 import com.gestion.comercial.dto.CustomErrorResponse;
-import com.gestion.comercial.service.ClienteService;
+import com.gestion.comercial.types.service.ClienteService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

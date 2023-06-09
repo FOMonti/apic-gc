@@ -5,7 +5,7 @@ import com.gestion.comercial.dto.ReservaResponse;
 import com.gestion.comercial.entity.Reserva;
 import com.gestion.comercial.exception.ValidationException;
 import com.gestion.comercial.repository.ClienteRepository;
-import com.gestion.comercial.service.ClienteService;
+import com.gestion.comercial.types.service.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
