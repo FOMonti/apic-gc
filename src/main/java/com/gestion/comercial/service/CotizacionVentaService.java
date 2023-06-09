@@ -2,6 +2,7 @@ package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
+import com.gestion.comercial.dto.Vehicle;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
 import com.gestion.comercial.exception.ValidationException;
@@ -25,22 +26,30 @@ public class CotizacionVentaService {
     private final CotizacionVentaMapper cotizacionVentaMapper;
     private final CotizacionVentaRepository cotizacionVentaRepository;
     private final GastoAdministrativoRepository gastoAdministrativoRepository;
+    private final UtilService utilService;
+    private final VehiculoService vehiculoService;
 
     @Autowired
     public CotizacionVentaService(CotizacionVentaMapper cotizacionVentaMapper,
                                   CotizacionVentaRepository cotizacionVentaRepository,
-                                  GastoAdministrativoRepository gastoAdministrativoRepository){
+                                  GastoAdministrativoRepository gastoAdministrativoRepository,
+                                  UtilService utilService,VehiculoService vehiculoService){
         this.cotizacionVentaMapper=cotizacionVentaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.gastoAdministrativoRepository = gastoAdministrativoRepository;
+        this.utilService = utilService;
+        this.vehiculoService = vehiculoService;
     }
 
     public CotizacionVentaResponse save(CotizacionVentaRequest cotizacionVentaRequest){
+        utilService.orElseThrow(cotizacionVentaRequest.getDni(),"/cotizaciones/save");
         CotizacionVenta cotizacionVenta = cotizacionVentaMapper.cotizacionRequestAEntity(cotizacionVentaRequest);
         cotizacionVenta.setNumeroCotizacion(numeroCotizacion(cotizacionVenta.getSucursal()));
+        Vehicle vehicle = vehiculoService.getVehicleByPlate(cotizacionVentaRequest.getPatente());
+        cotizacionVenta.setPrecioVenta(vehicle.getSellPrice());
         calcularPrecio(cotizacionVenta);
         List<GastoAdministrativo> gastoAdministrativos = calcularGastosAdministrativos(cotizacionVenta);
-        cotizacionVenta.setTotal(cotizacionVenta.getPrecioBase() + cotizacionVenta.getImporteIVA()
+        cotizacionVenta.setTotal(cotizacionVenta.getPrecioVenta() + cotizacionVenta.getImporteIVA()
                 + cotizacionVenta.getGastosAdministrativos());
         cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.PENDIENTE);
         cotizacionVentaRepository.save(cotizacionVenta);
@@ -56,7 +65,7 @@ public class CotizacionVentaService {
 
     private void calcularPrecio(CotizacionVenta cotizacionVenta) {
         //Integración con el modulo de administraciíon --> Solicitar el vehiculo por la patente
-        cotizacionVenta.setImporteIVA(cotizacionVenta.getPrecioBase()*0.21);
+        cotizacionVenta.setImporteIVA(cotizacionVenta.getPrecioVenta()*0.21);
     }
 
     private List<GastoAdministrativo> calcularGastosAdministrativos(CotizacionVenta cotizacionVenta) {
@@ -67,7 +76,7 @@ public class CotizacionVentaService {
             GastoAdministrativo gastoAdministrativo = new GastoAdministrativo();
             gastoAdministrativo.setLinea(linea);
             gastoAdministrativo.setNombre(costoAdministrativo);
-            double importe = cotizacionVenta.getPrecioBase() * costoAdministrativo.getPorcentaje() / 100;
+            double importe = cotizacionVenta.getPrecioVenta() * costoAdministrativo.getPorcentaje() / 100;
             if(costoAdministrativo.equals(CostoAdministrativo.GARANTIA))
                 gastoAdministrativo.setImporte(Boolean.TRUE.equals(cotizacionVenta.getGarantiaExtendida()) ?
                         importe * 2 : importe);

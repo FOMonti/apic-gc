@@ -21,15 +21,13 @@ public class CotizacionVentaResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fecha;
 
-    private String nombreCliente;
-
-    private String email;
+    private String dni;
 
     private String patente;
 
     private Boolean garantiaExtendida;
 
-    private Double precioBase;
+    private Double precioVenta;
 
     private Double importeIVA;
 

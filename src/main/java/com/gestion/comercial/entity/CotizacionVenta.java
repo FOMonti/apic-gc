@@ -29,18 +29,19 @@ public class CotizacionVenta {
     @Column(name = "patente", length = 10, nullable = false)
     private String patente;
 
-    @Column(name = "email", length = 70, nullable = false)
-    private String email;
+    @Column(name = "cliente_dni", length = 8, nullable = false)
+    private String clienteDni;
 
-    @Column(name = "nombre_cliente", length = 20, nullable = false)
-    private String nombreCliente;
+    @ManyToOne
+    @JoinColumn(name = "cliente_dni", referencedColumnName = "dni", insertable = false, updatable = false)
+    private Cliente cliente;
 
     @CreationTimestamp
     @Column(name = "fecha", updatable = false)
     private Timestamp fecha;
 
-    @Column(name = "precio_base")
-    private Double precioBase;
+    @Column(name = "precio_venta")
+    private Double precioVenta;
 
     @Column(name = "importe_iva")
     private Double importeIVA;

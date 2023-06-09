@@ -84,10 +84,10 @@ public class PDFService {
         table.addCell(cotizacionVenta.getIdVendedor().toString());
 
         table.addCell("NOMBRE CLIENTE ");
-        table.addCell(cotizacionVenta.getNombreCliente());
+        table.addCell(cotizacionVenta.getCliente().getNombre());
 
         table.addCell("EMAIL CLIENTE ");
-        table.addCell(cotizacionVenta.getEmail());
+        table.addCell(cotizacionVenta.getCliente().getEmail());
 
         table.addCell("PATENTE ");
         table.addCell(cotizacionVenta.getPatente());
@@ -106,8 +106,8 @@ public class PDFService {
             table.addCell(cell);
         }
 
-        table.addCell("PRECIO BASE: ");
-        table.addCell(crearCeldaImporte(cotizacionVenta.getPrecioBase()));
+        table.addCell("PRECIO VENTA: ");
+        table.addCell(crearCeldaImporte(cotizacionVenta.getPrecioVenta()));
 
         PdfPCell separatorCell = new PdfPCell(new Phrase("GASTOS ADMINISTRATIVOS", headerFont));
         separatorCell.setHorizontalAlignment(Element.ALIGN_CENTER);
