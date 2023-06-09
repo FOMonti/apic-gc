@@ -82,7 +82,7 @@ public class CotizacionVentaService {
     }
 
     private Long numeroCotizacion(String sucursal){
-        return cotizacionVentaRepository.countCotizacionVentaBySucursal(sucursal) + 1l;
+        return cotizacionVentaRepository.countCotizacionVentaBySucursal(sucursal) + 1L;
     }
 
     public List<CotizacionVentaResponse> getCotizacionesConFiltros(String sucursal, Integer idVendedor, String patente, String dniCliente) {

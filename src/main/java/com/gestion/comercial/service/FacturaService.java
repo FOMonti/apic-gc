@@ -1,6 +1,7 @@
 package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.FacturaResponse;
+import com.gestion.comercial.entity.Cliente;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.Factura;
 import com.gestion.comercial.entity.Reserva;
@@ -25,28 +26,26 @@ public class FacturaService {
     private final FacturaRepository facturaRepository;
     private final ReservaService reservaService;
     private final ReservaRepository reservaRepository;
+    private final UtilService utilService;
 
 
     @Autowired
     public FacturaService(FacturaMapper facturaMapper, CotizacionVentaRepository cotizacionVentaRepository,
                           FacturaRepository facturaRepository, ReservaService reservaService,
-                          ReservaRepository reservaRepository){
+                          ReservaRepository reservaRepository, UtilService utilService){
         this.facturaMapper = facturaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.facturaRepository = facturaRepository;
         this.reservaService = reservaService;
         this.reservaRepository  = reservaRepository;
+        this.utilService = utilService;
     }
 
     public FacturaResponse save(Long idCotizacion, String dni) {
+        CotizacionVenta cotizacionVenta = utilService.orElseThrow(idCotizacion,"/facturas/save");
+        validarCotizacionXFactura(idCotizacion);
+
         Factura factura = new Factura();
-        Optional<CotizacionVenta> cotizacionVentaOptional= cotizacionVentaRepository.findById(idCotizacion);
-        CotizacionVenta cotizacionVenta = cotizacionVentaOptional.orElseThrow
-                (() -> new ValidationException("Cotizacion no encontrada","/facturas"));
-        List<Factura> facturaList = facturaRepository.findFacturaByCotizacionID(idCotizacion);
-        if(!facturaList.isEmpty()){
-            throw new ValidationException("Ya existe una factura para esa cotizacion","/facturas");
-        }
         factura.setSucursal(cotizacionVenta.getSucursal());
         factura.setPatente(cotizacionVenta.getPatente());
         factura.setIdVendedor(cotizacionVenta.getIdVendedor());
@@ -74,6 +73,13 @@ public class FacturaService {
             factura.setReservaId(reserva.getId());
             reserva.setEstadoReserva(EstadoReserva.PROCESADA);
             reservaRepository.save(reserva);
+        }
+    }
+
+    private void validarCotizacionXFactura(Long idCotizacion){
+        List<Factura> facturaList = facturaRepository.findFacturaByCotizacionID(idCotizacion);
+        if(!facturaList.isEmpty()){
+            throw new ValidationException("Ya existe una factura para esa cotizacion","/facturas");
         }
     }
 }

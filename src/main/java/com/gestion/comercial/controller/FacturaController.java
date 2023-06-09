@@ -24,7 +24,6 @@ public class FacturaController {
     public ResponseEntity<FacturaResponse> save(@RequestParam Long idCotizacion,
                                                 @RequestParam String dni){
         return new ResponseEntity<>(facturaService.save(idCotizacion, dni), HttpStatus.CREATED);
-
     }
 
 }
