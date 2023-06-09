@@ -2,17 +2,22 @@ package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.CotizacionVentaRequest;
 import com.gestion.comercial.dto.CotizacionVentaResponse;
+import com.gestion.comercial.dto.ReservaResponse;
 import com.gestion.comercial.dto.Vehicle;
 import com.gestion.comercial.entity.Cliente;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
+import com.gestion.comercial.entity.Reserva;
 import com.gestion.comercial.exception.ValidationException;
 import com.gestion.comercial.mapper.ClienteMapper;
 import com.gestion.comercial.mapper.CotizacionVentaMapper;
+import com.gestion.comercial.mapper.ReservaMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
+import com.gestion.comercial.repository.ReservaRepository;
 import com.gestion.comercial.types.CostoAdministrativo;
 import com.gestion.comercial.types.EstadoCotizacion;
+import com.gestion.comercial.types.EstadoReserva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,21 +33,26 @@ public class CotizacionVentaService {
     private final CotizacionVentaMapper cotizacionVentaMapper;
     private final CotizacionVentaRepository cotizacionVentaRepository;
     private final GastoAdministrativoRepository gastoAdministrativoRepository;
+    private final ReservaService reservaService;
     private final UtilService utilService;
     private final VehiculoService vehiculoService;
     private final ClienteMapper clienteMapper;
+    private final ReservaMapper reservaMapper;
 
     @Autowired
     public CotizacionVentaService(CotizacionVentaMapper cotizacionVentaMapper,
                                   CotizacionVentaRepository cotizacionVentaRepository,
                                   GastoAdministrativoRepository gastoAdministrativoRepository,
-                                  UtilService utilService,VehiculoService vehiculoService, ClienteMapper clienteMapper){
+                                  UtilService utilService,VehiculoService vehiculoService, ClienteMapper clienteMapper,
+                                  ReservaService reservaService, ReservaMapper reservaMapper){
         this.cotizacionVentaMapper=cotizacionVentaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.gastoAdministrativoRepository = gastoAdministrativoRepository;
         this.utilService = utilService;
         this.vehiculoService = vehiculoService;
         this.clienteMapper = clienteMapper;
+        this.reservaService = reservaService;
+        this.reservaMapper = reservaMapper;
     }
 
     public CotizacionVentaResponse save(CotizacionVentaRequest cotizacionVentaRequest){
@@ -63,8 +73,24 @@ public class CotizacionVentaService {
         gastoAdministrativos.forEach(gastoAdministrativo -> {
             gastoAdministrativo.setCotizacionVenta(cotizacionVenta);
             gastoAdministrativoRepository.save(gastoAdministrativo);
-        } );
+        });
+        relacionarReserva(cotizacionVentaResponse);
         return cotizacionVentaResponse;
+    }
+
+    private void relacionarReserva(CotizacionVentaResponse cotizacionVentaResponse) {
+        List<Reserva> reservas = reservaService.getAllByClienteAndPagada(cotizacionVentaResponse.getCliente()
+                .getDni());
+        cotizacionVentaResponse.setImporteReserva(0D);
+        cotizacionVentaResponse.setTotalMenosReserva(0D);
+        if(!reservas.isEmpty()){
+            Reserva reserva = reservas.get(0);
+            cotizacionVentaResponse.setImporteReserva(reserva.getImporte());
+            cotizacionVentaResponse.setTotalMenosReserva(cotizacionVentaResponse.getTotal()-reserva.getImporte());
+            ReservaResponse reservaResponse = reservaMapper.entityAResponse(reserva);
+            reservaResponse.setClienteResponse(null);
+            cotizacionVentaResponse.setReservaResponse(reservaResponse);
+        }
     }
 
     private void calcularPrecio(CotizacionVenta cotizacionVenta) {

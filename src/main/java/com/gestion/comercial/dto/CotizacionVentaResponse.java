@@ -36,4 +36,10 @@ public class CotizacionVentaResponse {
     private Double importeTotalGastosAdministrativos;
 
     private Double total;
+
+    private Double importeReserva;
+
+    private Double totalMenosReserva;
+
+    private ReservaResponse reservaResponse;
 }
