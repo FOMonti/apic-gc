@@ -30,19 +30,23 @@ public class FacturaController {
         return new ResponseEntity<>(facturaService.save(idCotizacion), HttpStatus.CREATED);
     }
 
+    @PutMapping("/anular-garantia")
+    @ApiResponse(responseCode = "200", description = "Factura anulada exitosamente",
+            content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomErrorResponse.class)))
-    @PutMapping("/anular")
-    public ResponseEntity<String> anular(@RequestParam Long idFactura,
+    public ResponseEntity<String> anular(@RequestParam String patente,
                                          @RequestParam boolean garantiaAnulada){
-        facturaService.anular(idFactura,garantiaAnulada);
-        return new ResponseEntity<>("Factura anulada Exitosamente", HttpStatus.OK);
+        facturaService.anular(patente,garantiaAnulada);
+        return new ResponseEntity<>("Factura anulada exitosamente", HttpStatus.OK);
     }
 
+    @GetMapping("/garantia")
+    @ApiResponse(responseCode = "200", description = "Garantia encontrada",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = GarantiaResponse.class)))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
-    @GetMapping("/garantia")
-    public ResponseEntity<GarantiaResponse> gantia(@RequestParam Long idFactura){
-        return new ResponseEntity<>(facturaService.getGarantia(idFactura), HttpStatus.OK);
+    public ResponseEntity<GarantiaResponse> gantia(@RequestParam String patente){
+        return new ResponseEntity<>(facturaService.getGarantia(patente), HttpStatus.OK);
     }
 }

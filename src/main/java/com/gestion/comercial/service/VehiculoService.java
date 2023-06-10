@@ -35,7 +35,7 @@ public class VehiculoService {
         return vehicleResponse.getResult();
     }
 
-    public void reservarVehiculo(String plate, String status){
+    public void actualizarEstado(String plate, String status){
         Map<String, String> requestBody = new HashMap<>();
         requestBody.put("plate", plate);
         requestBody.put("status", status);

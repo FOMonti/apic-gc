@@ -1,10 +1,15 @@
 package com.gestion.comercial.controller;
 
+import com.gestion.comercial.dto.CustomErrorResponse;
+import com.gestion.comercial.dto.GarantiaResponse;
 import com.gestion.comercial.dto.MovimientoBancario;
 import com.gestion.comercial.dto.Vehicle;
 import com.gestion.comercial.service.FacturaService;
 import com.gestion.comercial.service.MovimientosService;
 import com.gestion.comercial.service.VehiculoService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,6 +52,10 @@ public class IntegracionController {
     }
 
     @PostMapping("/facturas")
+    @ApiResponse(responseCode = "200", description = "Pago generado con éxito",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GarantiaResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
     private ResponseEntity<String> aprobarPagoFactura(@RequestParam Long idFactura){
         facturaService.aprobarFactura(idFactura);
         return new ResponseEntity<>("Pago generado con éxito",HttpStatus.OK);

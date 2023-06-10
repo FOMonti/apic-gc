@@ -28,18 +28,20 @@ public class FacturaService {
     private final ReservaService reservaService;
     private final ReservaRepository reservaRepository;
     private final UtilService utilService;
+    private final VehiculoService vehiculoService;
 
 
     @Autowired
     public FacturaService(FacturaMapper facturaMapper, CotizacionVentaRepository cotizacionVentaRepository,
                           FacturaRepository facturaRepository, ReservaService reservaService,
-                          ReservaRepository reservaRepository, UtilService utilService){
+                          ReservaRepository reservaRepository, UtilService utilService, VehiculoService vehiculoService){
         this.facturaMapper = facturaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.facturaRepository = facturaRepository;
         this.reservaService = reservaService;
         this.reservaRepository  = reservaRepository;
         this.utilService = utilService;
+        this.vehiculoService = vehiculoService;
     }
 
     public FacturaResponse save(Long idCotizacion) {
@@ -78,26 +80,34 @@ public class FacturaService {
     }
 
     private void validarCotizacionXFactura(String patente){
-        List<Factura> facturaList = facturaRepository.findFacturaByPatente(patente);
+        List<Factura> facturaList = facturaRepository.findFacturaByPatenteAndEstadoOrderByFechaCreacionAsc(patente, EstadoFactura.PENDIENTE);
         if(!facturaList.isEmpty()){
             throw new ValidationException(
                     "Ya existe una factura para el vehiculo con patente: {"+patente+"}","/facturas/save");
         }
     }
 
-    public void anular(Long idFactura, boolean estadoGarantia) {
-        Factura factura = utilService.facturaOrElseThrow(idFactura, "/facturas/anular");
+    public void anular(String patente, boolean estadoGarantia) {
+        Factura factura = obtenerUltimaFactura(patente,"/facturas/anular");
         factura.setGarantiaAnulada(estadoGarantia);
         facturaRepository.save(factura);
     }
 
-    public GarantiaResponse getGarantia(Long idFactura) {
-        Factura factura = utilService.facturaOrElseThrow(idFactura, "/facturas/garantia");
+    public GarantiaResponse getGarantia(String patente) {
+        Factura factura = obtenerUltimaFactura(patente,"/facturas/garantia");
         GarantiaResponse garantiaResponse = new GarantiaResponse();
         garantiaResponse.setGarantiaAnulada(factura.getGarantiaAnulada());
         garantiaResponse.setGarantiaExtendida(factura.getGarantiaExtendida());
         garantiaResponse.setFecha(factura.getFechaPago());
         return garantiaResponse;
+    }
+
+    private Factura obtenerUltimaFactura(String patente, String ruta){
+        List<Factura> facturas = facturaRepository.findFacturaByPatenteAndEstadoOrderByFechaCreacionAsc(patente, EstadoFactura.PAGADA);
+        if(facturas.isEmpty()){
+            throw new ValidationException("El vehiculo con la patente ingresada no fue vendido o no se le ha creado una factura", ruta);
+        }
+        return facturas.get(0);
     }
 
     public void aprobarFactura(Long idFactura) {
@@ -110,5 +120,6 @@ public class FacturaService {
         factura.setEstado(EstadoFactura.PAGADA);
         factura.setFechaPago(new Timestamp(fechaActual.getTime()));
         facturaRepository.save(factura);
+        vehiculoService.actualizarEstado(factura.getPatente(),"VENDIDO");
     }
 }

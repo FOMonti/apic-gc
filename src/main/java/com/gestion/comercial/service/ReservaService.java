@@ -1,7 +1,6 @@
 package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.ClienteRequest;
-import com.gestion.comercial.dto.ClienteResponse;
 import com.gestion.comercial.dto.ReservaResponse;
 import com.gestion.comercial.dto.Vehicle;
 import com.gestion.comercial.entity.Cliente;
@@ -71,7 +70,7 @@ public class ReservaService {
         reserva = reservaRepository.save(reserva);
         ReservaResponse reservaResponse = reservaMapper.entityAResponse(reserva);
         reservaResponse.setClienteResponse(clienteMapper.clienteEntityAResponse(cliente));
-        vehiculoService.reservarVehiculo(patente, "RESERVADO");
+        vehiculoService.actualizarEstado(patente, "RESERVADO");
         return reservaResponse;
     }
 
