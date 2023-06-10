@@ -1,7 +1,7 @@
 package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.FacturaResponse;
-import com.gestion.comercial.entity.Cliente;
+import com.gestion.comercial.dto.GarantiaResponse;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.Factura;
 import com.gestion.comercial.entity.Reserva;
@@ -15,8 +15,9 @@ import com.gestion.comercial.types.EstadoReserva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class FacturaService {
@@ -41,15 +42,15 @@ public class FacturaService {
         this.utilService = utilService;
     }
 
-    public FacturaResponse save(Long idCotizacion, String dni) {
-        CotizacionVenta cotizacionVenta = utilService.orElseThrow(idCotizacion,"/facturas/save");
-        validarCotizacionXFactura(idCotizacion);
+    public FacturaResponse save(Long idCotizacion) {
+        CotizacionVenta cotizacionVenta = utilService.cotizacionOrElseThrow(idCotizacion,"/facturas/save");
+        validarCotizacionXFactura(cotizacionVenta.getPatente());
 
         Factura factura = new Factura();
         factura.setSucursal(cotizacionVenta.getSucursal());
         factura.setPatente(cotizacionVenta.getPatente());
         factura.setIdVendedor(cotizacionVenta.getIdVendedor());
-        factura.setClienteDni(dni);
+        factura.setClienteDni(cotizacionVenta.getCliente().getDni());
         factura.setEstado(EstadoFactura.PENDIENTE);
         factura.setCotizacionID(idCotizacion);
         factura.setNumeroFactura(numeroFactura(cotizacionVenta.getSucursal()));
@@ -76,10 +77,38 @@ public class FacturaService {
         }
     }
 
-    private void validarCotizacionXFactura(Long idCotizacion){
-        List<Factura> facturaList = facturaRepository.findFacturaByCotizacionID(idCotizacion);
+    private void validarCotizacionXFactura(String patente){
+        List<Factura> facturaList = facturaRepository.findFacturaByPatente(patente);
         if(!facturaList.isEmpty()){
-            throw new ValidationException("Ya existe una factura para esa cotizacion","/facturas");
+            throw new ValidationException(
+                    "Ya existe una factura para el vehiculo con patente: {"+patente+"}","/facturas/save");
         }
+    }
+
+    public void anular(Long idFactura, boolean estadoGarantia) {
+        Factura factura = utilService.facturaOrElseThrow(idFactura, "/facturas/anular");
+        factura.setGarantiaAnulada(estadoGarantia);
+        facturaRepository.save(factura);
+    }
+
+    public GarantiaResponse getGarantia(Long idFactura) {
+        Factura factura = utilService.facturaOrElseThrow(idFactura, "/facturas/garantia");
+        GarantiaResponse garantiaResponse = new GarantiaResponse();
+        garantiaResponse.setGarantiaAnulada(factura.getGarantiaAnulada());
+        garantiaResponse.setGarantiaExtendida(factura.getGarantiaExtendida());
+        garantiaResponse.setFecha(factura.getFechaPago());
+        return garantiaResponse;
+    }
+
+    public void aprobarFactura(Long idFactura) {
+        Factura factura = utilService.facturaOrElseThrow(idFactura, "/integracion/facturas");
+        if(!factura.getEstado().equals(EstadoFactura.PENDIENTE)){
+            throw new ValidationException(
+                    "Para aprobar una factura, está debe tener estado PENDIENTE","/integracion/facturas");
+        }
+        Date fechaActual = new Date();
+        factura.setEstado(EstadoFactura.PAGADA);
+        factura.setFechaPago(new Timestamp(fechaActual.getTime()));
+        facturaRepository.save(factura);
     }
 }

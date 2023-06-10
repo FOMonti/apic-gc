@@ -67,6 +67,6 @@ public class Factura {
     @Column(name = "fecha_creacion", updatable = false)
     private Timestamp fechaCreacion;
 
-    @Column(name = "fecha_pago", updatable = false)
+    @Column(name = "fecha_pago")
     private Timestamp fechaPago;
 }

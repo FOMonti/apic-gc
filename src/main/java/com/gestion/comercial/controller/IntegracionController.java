@@ -2,6 +2,7 @@ package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.MovimientoBancario;
 import com.gestion.comercial.dto.Vehicle;
+import com.gestion.comercial.service.FacturaService;
 import com.gestion.comercial.service.MovimientosService;
 import com.gestion.comercial.service.VehiculoService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,9 +22,13 @@ public class IntegracionController {
 
     private final MovimientosService movimientosService;
 
-    public IntegracionController(MovimientosService movimientosService, VehiculoService vehiculoService){
+    private final FacturaService facturaService;
+
+    public IntegracionController(MovimientosService movimientosService, VehiculoService vehiculoService,
+                                 FacturaService facturaService){
         this.movimientosService = movimientosService;
         this.vehiculoService = vehiculoService;
+        this.facturaService = facturaService;
     }
 
     @GetMapping("/movimientos")
@@ -39,5 +44,11 @@ public class IntegracionController {
     public ResponseEntity<Vehicle> getVehiculo(@RequestParam String patente){
         Vehicle vehicle = vehiculoService.getVehicleByPlate(patente);
         return new ResponseEntity<>(vehicle,HttpStatus.OK);
+    }
+
+    @PostMapping("/facturas")
+    private ResponseEntity<String> aprobarPagoFactura(@RequestParam Long idFactura){
+        facturaService.aprobarFactura(idFactura);
+        return new ResponseEntity<>("Pago generado con éxito",HttpStatus.OK);
     }
 }

@@ -12,4 +12,6 @@ public interface FacturaRepository extends JpaRepository<Factura, Long> {
     Long countFacturaBySucursal(String sucursal);
 
     List<Factura> findFacturaByCotizacionID(Long id);
+
+    List<Factura> findFacturaByPatente(String patente);
 }

@@ -57,7 +57,7 @@ public class CotizacionVentaService {
 
     public CotizacionVentaResponse save(CotizacionVentaRequest cotizacionVentaRequest){
         Vehicle vehicle = vehiculoService.getVehicleByPlate(cotizacionVentaRequest.getPatente());
-        Cliente cliente= utilService.orElseThrow(cotizacionVentaRequest.getDni(),"/cotizaciones/save");
+        Cliente cliente= utilService.clienteOrElseThrow(cotizacionVentaRequest.getDni(),"/cotizaciones/save");
         CotizacionVenta cotizacionVenta = cotizacionVentaMapper.cotizacionRequestAEntity(cotizacionVentaRequest);
         cotizacionVenta.setCliente(cliente);
         cotizacionVenta.setNumeroCotizacion(numeroCotizacion(cotizacionVenta.getSucursal()));

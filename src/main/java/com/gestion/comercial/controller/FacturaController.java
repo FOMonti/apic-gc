@@ -1,6 +1,7 @@
 package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.FacturaResponse;
+import com.gestion.comercial.dto.GarantiaResponse;
 import com.gestion.comercial.service.FacturaService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +22,19 @@ public class FacturaController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<FacturaResponse> save(@RequestParam Long idCotizacion,
-                                                @RequestParam String dni){
-        return new ResponseEntity<>(facturaService.save(idCotizacion, dni), HttpStatus.CREATED);
+    public ResponseEntity<FacturaResponse> save(@RequestParam Long idCotizacion){
+        return new ResponseEntity<>(facturaService.save(idCotizacion), HttpStatus.CREATED);
     }
 
+    @PutMapping("/anular")
+    public ResponseEntity<String> anular(@RequestParam Long idFactura,
+                                         @RequestParam boolean garantiaAnulada){
+        facturaService.anular(idFactura,garantiaAnulada);
+        return new ResponseEntity<>("Factura anulada Exitosamente", HttpStatus.OK);
+    }
+
+    @GetMapping("/garantia")
+    public ResponseEntity<GarantiaResponse> gantia(@RequestParam Long idFactura){
+        return new ResponseEntity<>(facturaService.getGarantia(idFactura), HttpStatus.OK);
+    }
 }
