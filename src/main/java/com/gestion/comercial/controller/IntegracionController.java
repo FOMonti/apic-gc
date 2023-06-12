@@ -1,12 +1,10 @@
 package com.gestion.comercial.controller;
 
-import com.gestion.comercial.dto.CustomErrorResponse;
-import com.gestion.comercial.dto.GarantiaResponse;
-import com.gestion.comercial.dto.MovimientoBancario;
-import com.gestion.comercial.dto.Vehicle;
+import com.gestion.comercial.dto.*;
 import com.gestion.comercial.service.FacturaService;
 import com.gestion.comercial.service.MovimientosService;
 import com.gestion.comercial.service.VehiculoService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -37,6 +35,9 @@ public class IntegracionController {
     }
 
     @GetMapping("/movimientos")
+    @ApiResponse(responseCode = "200", description = "Movimientos encontradas", content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = MovimientoBancario.class))))
+    @ApiResponse(responseCode = "404", description = "El modulo 2 no devolvió movimientos", content = @Content)
     public ResponseEntity<List<MovimientoBancario>> getMovimientos(){
         List<MovimientoBancario> movimientoBancarios = movimientosService.movimientoBancarios();
         if(movimientoBancarios.isEmpty()){
@@ -46,6 +47,9 @@ public class IntegracionController {
     }
 
     @GetMapping("/vehiculos")
+    @ApiResponse(responseCode = "200", description = "Vehiculo encontrado",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CotizacionVentaResponse.class)))
+    @ApiResponse(responseCode = "404", description = "El modulo 4 no devolvió un vehiculo con la patente ingresada", content = @Content)
     public ResponseEntity<Vehicle> getVehiculo(@RequestParam String patente){
         Vehicle vehicle = vehiculoService.getVehicleByPlate(patente);
         return new ResponseEntity<>(vehicle,HttpStatus.OK);

@@ -9,18 +9,13 @@ import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.GastoAdministrativo;
 import com.gestion.comercial.entity.Reserva;
 import com.gestion.comercial.exception.ValidationException;
-import com.gestion.comercial.mapper.ClienteMapper;
 import com.gestion.comercial.mapper.CotizacionVentaMapper;
 import com.gestion.comercial.mapper.ReservaMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.GastoAdministrativoRepository;
-import com.gestion.comercial.repository.ReservaRepository;
 import com.gestion.comercial.types.CostoAdministrativo;
 import com.gestion.comercial.types.EstadoCotizacion;
-import com.gestion.comercial.types.EstadoReserva;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -36,21 +31,19 @@ public class CotizacionVentaService {
     private final ReservaService reservaService;
     private final UtilService utilService;
     private final VehiculoService vehiculoService;
-    private final ClienteMapper clienteMapper;
     private final ReservaMapper reservaMapper;
 
     @Autowired
     public CotizacionVentaService(CotizacionVentaMapper cotizacionVentaMapper,
                                   CotizacionVentaRepository cotizacionVentaRepository,
                                   GastoAdministrativoRepository gastoAdministrativoRepository,
-                                  UtilService utilService,VehiculoService vehiculoService, ClienteMapper clienteMapper,
+                                  UtilService utilService,VehiculoService vehiculoService,
                                   ReservaService reservaService, ReservaMapper reservaMapper){
         this.cotizacionVentaMapper=cotizacionVentaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.gastoAdministrativoRepository = gastoAdministrativoRepository;
         this.utilService = utilService;
         this.vehiculoService = vehiculoService;
-        this.clienteMapper = clienteMapper;
         this.reservaService = reservaService;
         this.reservaMapper = reservaMapper;
     }
@@ -94,7 +87,6 @@ public class CotizacionVentaService {
     }
 
     private void calcularPrecio(CotizacionVenta cotizacionVenta) {
-        //Integración con el modulo de administraciíon --> Solicitar el vehiculo por la patente
         cotizacionVenta.setImporteIVA(cotizacionVenta.getPrecioVenta()*0.21);
     }
 
@@ -122,29 +114,6 @@ public class CotizacionVentaService {
 
     private Long numeroCotizacion(String sucursal){
         return cotizacionVentaRepository.countCotizacionVentaBySucursal(sucursal) + 1L;
-    }
-
-    public List<CotizacionVentaResponse> getCotizacionesConFiltros(String sucursal, Integer idVendedor, String patente, String dniCliente) {
-        Specification<CotizacionVenta> specification = Specification.where(null);
-
-        if (sucursal != null && !sucursal.isEmpty()) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("sucursal"), sucursal));
-        }
-
-        if (idVendedor != null) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("idVendedor"), idVendedor));
-        }
-
-        if (patente != null && !patente.isEmpty()) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("patente"), "%" + patente + "%"));
-        }
-
-        if (dniCliente != null && !dniCliente.isEmpty()) {
-            specification = specification.and((root, query, criteriaBuilder) -> criteriaBuilder.like(root.get("dniCliente"), "%" + dniCliente + "%"));
-        }
-        List<CotizacionVenta> cotizacionVentas = cotizacionVentaRepository.findAll((Sort) specification);
-
-        return cotizacionVentaMapper.cotizacionesVentaListAResponse(cotizacionVentas);
     }
 
     public List<CotizacionVentaResponse> getAll(){

@@ -26,6 +26,10 @@ public class FacturaController {
     }
 
     @PostMapping("/save")
+    @ApiResponse(responseCode = "201", description = "Factura creada exitosamente",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = FacturaResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
     public ResponseEntity<FacturaResponse> save(@RequestParam Long idCotizacion){
         return new ResponseEntity<>(facturaService.save(idCotizacion), HttpStatus.CREATED);
     }

@@ -1,9 +1,11 @@
 package com.gestion.comercial.controller;
 
+import com.gestion.comercial.dto.ClienteResponse;
 import com.gestion.comercial.dto.ConsultaRequest;
 import com.gestion.comercial.dto.ConsultaResponse;
 import com.gestion.comercial.dto.CustomErrorResponse;
 import com.gestion.comercial.service.ConsultaService;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -39,6 +41,10 @@ public class ConsultaController {
     }
 
     @GetMapping("/getAll")
+    @ApiResponse(responseCode = "200", description = "Consultas encontradas",
+            content = @Content(mediaType = "application/json",
+                    array = @ArraySchema(schema = @Schema(implementation = ConsultaResponse.class))))
+    @ApiResponse(responseCode = "404", description = "No se encontró ninguna Consulta", content = @Content)
     public ResponseEntity<List<ConsultaResponse>> getAll(){
         List<ConsultaResponse> consultaResponses = consultaService.getAll();
         if(consultaResponses.isEmpty()){

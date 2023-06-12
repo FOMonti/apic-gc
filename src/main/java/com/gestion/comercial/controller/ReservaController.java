@@ -1,9 +1,7 @@
 package com.gestion.comercial.controller;
 
 import com.gestion.comercial.dto.*;
-import com.gestion.comercial.service.MovimientosService;
 import com.gestion.comercial.service.ReservaService;
-import com.gestion.comercial.service.VehiculoService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -32,6 +30,10 @@ public class ReservaController {
     }
 
     @PostMapping("/save")
+    @ApiResponse(responseCode = "201", description = "Reserva creada exitosamente",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = ReservaResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
     public ResponseEntity<ReservaResponse> save(@Valid @RequestBody ClienteRequest clienteRequest,
                                                 @RequestParam String patente){
         return new ResponseEntity<>(reservaService.save(clienteRequest, patente), HttpStatus.CREATED);

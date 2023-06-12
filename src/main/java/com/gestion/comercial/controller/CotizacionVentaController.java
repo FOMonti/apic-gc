@@ -40,13 +40,6 @@ public class CotizacionVentaController {
     public ResponseEntity<CotizacionVentaResponse> saveCotizacionVenta(@Valid @RequestBody CotizacionVentaRequest cotizacionVentaRequest){
         return new ResponseEntity<>(cotizacionVentaService.save(cotizacionVentaRequest), HttpStatus.CREATED);
     }
-    @GetMapping
-    public List<CotizacionVentaResponse> getCotizacionesConFiltros(@RequestParam(required = false) String sucursal,
-                                                      @RequestParam(required = false) Integer idVendedor,
-                                                      @RequestParam(required = false) String patente,
-                                                      @RequestParam(required = false) String dniCliente) {
-        return cotizacionVentaService.getCotizacionesConFiltros(sucursal, idVendedor, patente, dniCliente);
-    }
 
     @GetMapping("/getAll")
     @ApiResponse(responseCode = "200", description = "Cotizaciones encontradas",
