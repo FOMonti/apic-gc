@@ -101,6 +101,7 @@ public class ReservaService {
                         "/reservas/anular/{id}");
             }else{
                 reserva.setEstadoReserva(EstadoReserva.ANULADA);
+                vehiculoService.actualizarEstado(reserva.getPatente(),"DISPONIBLE");
                 reservaRepository.save(reserva);
             }
         }
