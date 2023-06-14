@@ -68,7 +68,7 @@ public class ReservaController {
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
     @ApiResponse(responseCode = "404", description = "No se encontró la cotizacón de venta", content = @Content)
     public ResponseEntity<ReservaResponse> anular(@PathVariable Long id) {
-        Optional<ReservaResponse> reservaResponse = reservaService.anularCotizacion(id);
+        Optional<ReservaResponse> reservaResponse = reservaService.anularReserva(id);
         return reservaResponse.map(response -> new ResponseEntity<>(response, HttpStatus.OK))
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }

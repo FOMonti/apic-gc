@@ -35,13 +35,13 @@ public class FacturaController {
     }
 
     @PutMapping("/anular-garantia")
-    @ApiResponse(responseCode = "200", description = "Factura anulada exitosamente",
+    @ApiResponse(responseCode = "200", description = "Garantia anulada exitosamente",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomErrorResponse.class)))
-    public ResponseEntity<String> anular(@RequestParam String patente,
+    public ResponseEntity<String> anularGarantia(@RequestParam String patente,
                                          @RequestParam boolean garantiaAnulada){
-        facturaService.anular(patente,garantiaAnulada);
+        facturaService.anularGarantia(patente,garantiaAnulada);
         return new ResponseEntity<>("Factura anulada exitosamente", HttpStatus.OK);
     }
 
@@ -52,5 +52,15 @@ public class FacturaController {
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
     public ResponseEntity<GarantiaResponse> gantia(@RequestParam String patente){
         return new ResponseEntity<>(facturaService.getGarantia(patente), HttpStatus.OK);
+    }
+
+    @PutMapping("/anular")
+    @ApiResponse(responseCode = "200", description = "Factura anulada exitosamente",
+            content = @Content(mediaType = "application/json"))
+    @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CustomErrorResponse.class)))
+    public ResponseEntity<String> anular(@RequestParam Long id){
+        facturaService.anular(id);
+        return new ResponseEntity<>("Factura anulada exitosamente", HttpStatus.OK);
     }
 }

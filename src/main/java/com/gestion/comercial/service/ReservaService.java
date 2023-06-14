@@ -92,7 +92,7 @@ public class ReservaService {
         return Optional.ofNullable(reservaResponse);
     }
 
-    public Optional<ReservaResponse> anularCotizacion(Long id) {
+    public Optional<ReservaResponse> anularReserva(Long id) {
         Optional<Reserva> reservaOptional =reservaRepository.findById(id);
         if(reservaOptional.isPresent()){
             Reserva reserva = reservaOptional.get();
