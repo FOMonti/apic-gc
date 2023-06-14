@@ -141,4 +141,13 @@ public class FacturaService {
         }
         vehiculoService.actualizarEstado(factura.getPatente(),"DISPONIBLE");
     }
+
+    public List<FacturaResponse> getAll() {
+        List<Factura> facturas = facturaRepository.findAll();
+        return facturaMapper.entityListAResponse(facturas);
+    }
+
+    public FacturaResponse getById(Long id) {
+        return facturaMapper.entityAResponse(utilService.facturaOrElseThrow(id,"/facturas/getById"));
+    }
 }
