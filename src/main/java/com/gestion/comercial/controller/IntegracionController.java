@@ -3,6 +3,7 @@ package com.gestion.comercial.controller;
 import com.gestion.comercial.dto.*;
 import com.gestion.comercial.service.FacturaService;
 import com.gestion.comercial.service.MovimientosService;
+import com.gestion.comercial.service.ReservaService;
 import com.gestion.comercial.service.VehiculoService;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -26,12 +27,14 @@ public class IntegracionController {
     private final MovimientosService movimientosService;
 
     private final FacturaService facturaService;
+    private ReservaService reservaService;
 
     public IntegracionController(MovimientosService movimientosService, VehiculoService vehiculoService,
-                                 FacturaService facturaService){
+                                 FacturaService facturaService, ReservaService reservaService){
         this.movimientosService = movimientosService;
         this.vehiculoService = vehiculoService;
         this.facturaService = facturaService;
+        this.reservaService = reservaService;
     }
 
     @GetMapping("/movimientos")
@@ -62,6 +65,16 @@ public class IntegracionController {
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
     public ResponseEntity<String> aprobarPagoFactura(@RequestParam Long idFactura){
         facturaService.aprobarFactura(idFactura);
+        return new ResponseEntity<>("Pago generado con éxito",HttpStatus.OK);
+    }
+
+    @PostMapping("/reservas")
+    @ApiResponse(responseCode = "200", description = "Pago generado con éxito",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GarantiaResponse.class)))
+    @ApiResponse(responseCode = "400", description = "Error en la solicitud",
+            content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
+    public ResponseEntity<String> aprobarPagoReserva(@RequestParam Long idReserva){
+        reservaService.aprobarReserva(idReserva);
         return new ResponseEntity<>("Pago generado con éxito",HttpStatus.OK);
     }
 }

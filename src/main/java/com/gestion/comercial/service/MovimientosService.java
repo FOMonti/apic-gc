@@ -4,6 +4,7 @@ import com.gestion.comercial.dto.MovimientoBancario;
 import com.gestion.comercial.dto.MovimientoRequest;
 import com.gestion.comercial.entity.Cliente;
 import com.gestion.comercial.entity.Factura;
+import com.gestion.comercial.entity.Reserva;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -65,5 +66,25 @@ public class MovimientosService {
         sb.append("0".repeat(12));
         sb.append(dni);
         return sb.toString();
+    }
+
+    public ResponseEntity<String> enviarMovimientoReserva(Reserva reserva) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        MovimientoRequest movimientoRequest = crearMovimientoFactura(reserva);
+        HttpEntity<MovimientoRequest> requestEntity = new HttpEntity<>(movimientoRequest, headers);
+
+        return restTemplate.exchange(URL_G2_MOVIMIENTO, HttpMethod.POST, requestEntity, String.class);
+    }
+
+    private MovimientoRequest crearMovimientoFactura(Reserva reserva){
+        MovimientoRequest movimientoRequest = new MovimientoRequest();
+        Cliente cliente = reserva.getCliente();
+        movimientoRequest.setCodigo_unico(calcularCodigoUnico(cliente.getDni()));
+        movimientoRequest.setConcepto("R-" + reserva.getId());
+        movimientoRequest.setMonto(reserva.getImporte());
+        movimientoRequest.setDocumento(Integer.parseInt(cliente.getDni()));
+        movimientoRequest.setNombre_completo(cliente.getNombre() + " " + cliente.getApellido());
+        return movimientoRequest;
     }
 }

@@ -12,6 +12,8 @@ import com.gestion.comercial.repository.ClienteRepository;
 import com.gestion.comercial.repository.ReservaRepository;
 import com.gestion.comercial.types.EstadoReserva;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -29,12 +31,13 @@ public class ReservaService {
     private final ReservaMapper reservaMapper;
     private final ClienteRepository clienteRepository;
     private final UtilService utilService;
+    private final MovimientosService movimientosService;
 
     @Autowired
     public ReservaService(ClienteService clienteService, ClienteMapper clienteMapper,
                           VehiculoService vehiculoService, ReservaRepository reservaRepository,
                           ReservaMapper reservaMapper, ClienteRepository clienteRepository,
-                          UtilService utilService){
+                          UtilService utilService, MovimientosService movimientosService){
         this.clienteService = clienteService;
         this.clienteMapper = clienteMapper;
         this.vehiculoService = vehiculoService;
@@ -42,6 +45,7 @@ public class ReservaService {
         this.reservaMapper = reservaMapper;
         this.clienteRepository = clienteRepository;
         this.utilService = utilService;
+        this.movimientosService = movimientosService;
     }
 
     public ReservaResponse save(ClienteRequest clienteRequest, String patente) {
@@ -96,8 +100,8 @@ public class ReservaService {
         Optional<Reserva> reservaOptional =reservaRepository.findById(id);
         if(reservaOptional.isPresent()){
             Reserva reserva = reservaOptional.get();
-            if(reserva.getEstadoReserva().equals(EstadoReserva.PAGADA)){
-                throw new ValidationException("No se puede anular la reserva ya que la misma esta en estado: PAGADA",
+            if(!reserva.getEstadoReserva().equals(EstadoReserva.PENDIENTE)){
+                throw new ValidationException("Para anular una reserva la misma debe tener estado PENDIENTE",
                         "/reservas/anular/{id}");
             }else{
                 reserva.setEstadoReserva(EstadoReserva.ANULADA);
@@ -106,5 +110,21 @@ public class ReservaService {
             }
         }
         return getReservaById(id);
+    }
+
+    public void aprobarReserva(Long idReserva) {
+        Optional<Reserva> reservaOptional = reservaRepository.findById(idReserva);
+        Reserva reserva = reservaOptional.orElseThrow(() ->
+                new ValidationException("No se encontró la reserva","/integracion/reservas"));
+        if(!reserva.getEstadoReserva().equals(EstadoReserva.PENDIENTE)){
+            throw new ValidationException("Para aprobar una reserva la misma debe tener estado pendiente",
+                    "/integracion/reservas");
+        }
+        reserva.setEstadoReserva(EstadoReserva.PAGADA);
+        reservaRepository.save(reserva);
+        ResponseEntity<String> responseEntity = movimientosService.enviarMovimientoReserva(reserva);
+        if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+            throw new ValidationException("Hubo un error al generar el movimiento", "/integracion/facturas");
+        }
     }
 }
