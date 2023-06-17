@@ -168,7 +168,12 @@ public class FacturaService {
 
     public List<FacturaResponse> getAll() {
         List<Factura> facturas = facturaRepository.findAll();
-        return facturaMapper.entityListAResponse(facturas);
+        List<FacturaResponse> facturaResponses = facturaMapper.entityListAResponse(facturas);
+        for(FacturaResponse facturaResponse : facturaResponses){
+            Optional<Plan> plan = planRepository.findPlanByFacturaId(facturaResponse.getId());
+            plan.ifPresent(value -> facturaResponse.setPlanResponse(planMapper.entityToResponse(value)));
+        }
+        return facturaResponses;
     }
 
     public FacturaResponse getById(Long id) {
