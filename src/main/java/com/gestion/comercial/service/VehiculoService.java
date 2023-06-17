@@ -19,6 +19,8 @@ public class VehiculoService {
     private final String URL_GET_PATENTE = "https://gadmin-backend-production2.up.railway.app/api/v1/vehicle/getByPlate/";
 
     private final String URL_UPDATE_STATUS = "https://gadmin-backend-production2.up.railway.app/api/v1/vehicle/updateStatus";
+
+    private final String URL_UPDATE_DNI= "https://gadmin-backend-production2.up.railway.app/api/v1/vehicle/updateDni";
     @Autowired
     public VehiculoService(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
@@ -46,5 +48,19 @@ public class VehiculoService {
         HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
 
         restTemplate.exchange(URL_UPDATE_STATUS, HttpMethod.POST, requestEntity, String.class);
+    }
+
+    public void actualizarDNI(String plate, String newDni){
+        Map<String, String> requestBody = new HashMap<>();
+        requestBody.put("plate", plate);
+        requestBody.put("newDni", newDni);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<Map<String, String>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+        restTemplate.exchange(URL_UPDATE_DNI, HttpMethod.POST, requestEntity, String.class);
+
     }
 }

@@ -3,10 +3,7 @@ package com.gestion.comercial.service;
 import com.gestion.comercial.dto.FacturaResponse;
 import com.gestion.comercial.dto.GarantiaResponse;
 import com.gestion.comercial.dto.PlanRequest;
-import com.gestion.comercial.entity.CotizacionVenta;
-import com.gestion.comercial.entity.Factura;
-import com.gestion.comercial.entity.Plan;
-import com.gestion.comercial.entity.Reserva;
+import com.gestion.comercial.entity.*;
 import com.gestion.comercial.exception.ValidationException;
 import com.gestion.comercial.mapper.FacturaMapper;
 import com.gestion.comercial.mapper.PlanMapper;
@@ -144,8 +141,10 @@ public class FacturaService {
         Date fechaActual = new Date();
         factura.setEstado(EstadoFactura.PAGADA);
         factura.setFechaPago(new Timestamp(fechaActual.getTime()));
+        Cliente cliente = utilService.clienteOrElseThrow(factura.getClienteDni(),"/integracion/facturas");
         facturaRepository.save(factura);
         vehiculoService.actualizarEstado(factura.getPatente(),"VENDIDO");
+        vehiculoService.actualizarDNI(factura.getPatente(),cliente.getDni());
         ResponseEntity<String> responseEntity = movimientosService.enviarMovimientoFactura(factura);
         if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
             throw new ValidationException("Hubo un error al generar el movimiento", "/integracion/facturas");
