@@ -31,4 +31,6 @@ public class FacturaResponse {
     private Timestamp fechaCreacion;
 
     private Timestamp fechaPago;
+
+    private PlanResponse planResponse;
 }

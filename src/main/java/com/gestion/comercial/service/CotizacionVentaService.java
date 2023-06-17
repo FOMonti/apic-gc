@@ -135,8 +135,8 @@ public class CotizacionVentaService {
         CotizacionVentaResponse cotizacionVentaResponse = null;
         if(cotizacionVentaOptional.isPresent()){
             CotizacionVenta cotizacionVenta = cotizacionVentaOptional.get();
-            if(cotizacionVenta.getEstadoCotizacion().equals(EstadoCotizacion.PAGADA)){
-                throw new ValidationException("No se puede anular la cotización ya que la misma esta en estado: PAGADA",
+            if(!cotizacionVenta.getEstadoCotizacion().equals(EstadoCotizacion.PENDIENTE)){
+                throw new ValidationException("Para anular una cotización la misma debe tener estado Pendiente",
                         "/cotizaciones/anular/{id}");
             }else{
                 cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.ANULADO);

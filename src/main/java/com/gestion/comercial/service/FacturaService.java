@@ -2,17 +2,24 @@ package com.gestion.comercial.service;
 
 import com.gestion.comercial.dto.FacturaResponse;
 import com.gestion.comercial.dto.GarantiaResponse;
+import com.gestion.comercial.dto.PlanRequest;
 import com.gestion.comercial.entity.CotizacionVenta;
 import com.gestion.comercial.entity.Factura;
+import com.gestion.comercial.entity.Plan;
 import com.gestion.comercial.entity.Reserva;
 import com.gestion.comercial.exception.ValidationException;
 import com.gestion.comercial.mapper.FacturaMapper;
+import com.gestion.comercial.mapper.PlanMapper;
 import com.gestion.comercial.repository.CotizacionVentaRepository;
 import com.gestion.comercial.repository.FacturaRepository;
+import com.gestion.comercial.repository.PlanRepository;
 import com.gestion.comercial.repository.ReservaRepository;
+import com.gestion.comercial.types.EstadoCotizacion;
 import com.gestion.comercial.types.EstadoFactura;
 import com.gestion.comercial.types.EstadoReserva;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -20,6 +27,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class FacturaService {
@@ -31,12 +39,16 @@ public class FacturaService {
     private final ReservaRepository reservaRepository;
     private final UtilService utilService;
     private final VehiculoService vehiculoService;
+    private final PlanRepository planRepository;
+    private final PlanMapper planMapper;
+    private final MovimientosService movimientosService;
 
 
     @Autowired
     public FacturaService(FacturaMapper facturaMapper, CotizacionVentaRepository cotizacionVentaRepository,
                           FacturaRepository facturaRepository, ReservaService reservaService,
-                          ReservaRepository reservaRepository, UtilService utilService, VehiculoService vehiculoService){
+                          ReservaRepository reservaRepository, UtilService utilService, VehiculoService vehiculoService,
+                          PlanRepository planRepository, PlanMapper planMapper, MovimientosService movimientosService){
         this.facturaMapper = facturaMapper;
         this.cotizacionVentaRepository = cotizacionVentaRepository;
         this.facturaRepository = facturaRepository;
@@ -44,12 +56,20 @@ public class FacturaService {
         this.reservaRepository  = reservaRepository;
         this.utilService = utilService;
         this.vehiculoService = vehiculoService;
+        this.planRepository = planRepository;
+        this.planMapper = planMapper;
+        this.movimientosService = movimientosService;
     }
 
     public FacturaResponse save(Long idCotizacion) {
         CotizacionVenta cotizacionVenta = utilService.cotizacionOrElseThrow(idCotizacion,"/facturas/save");
-        validarCotizacionXFactura(cotizacionVenta.getPatente());
-
+        validarPatente(cotizacionVenta.getPatente());
+        if(!cotizacionVenta.getEstadoCotizacion().equals(EstadoCotizacion.PENDIENTE)){
+            throw new ValidationException("Para facturar una cotizacion esta debe estar Pendiente",
+                    "/facturas/save");
+        }
+        cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.PROCESADA);
+        cotizacionVentaRepository.save(cotizacionVenta);
         Factura factura = new Factura();
         factura.setSucursal(cotizacionVenta.getSucursal());
         factura.setPatente(cotizacionVenta.getPatente());
@@ -64,11 +84,12 @@ public class FacturaService {
         factura.setGarantiaExtendida(cotizacionVenta.getGarantiaExtendida());
         facturaRepository.save(factura);
         vehiculoService.actualizarEstado(cotizacionVenta.getPatente(), "RESERVADO");
+
         return facturaMapper.entityAResponse(factura);
     }
 
     public Long numeroFactura(String sucursal){
-        return facturaRepository.countFacturaBySucursal(sucursal);
+        return facturaRepository.countFacturaBySucursal(sucursal) + 1;
     }
 
     private void relacionarReserva(Factura factura){
@@ -83,11 +104,11 @@ public class FacturaService {
         }
     }
 
-    private void validarCotizacionXFactura(String patente){
+    private void validarPatente(String patente){
         List<Factura> facturaList = facturaRepository.findFacturaByPatenteAndEstadoOrderByFechaCreacionAsc(patente, EstadoFactura.PENDIENTE);
         if(!facturaList.isEmpty()){
             throw new ValidationException(
-                    "Ya existe una factura para el vehiculo con patente: {"+patente+"}","/facturas/save");
+                    "Ya existe una factura pendiente para el vehiculo con patente: {"+patente+"}","/facturas/save");
         }
     }
 
@@ -125,6 +146,10 @@ public class FacturaService {
         factura.setFechaPago(new Timestamp(fechaActual.getTime()));
         facturaRepository.save(factura);
         vehiculoService.actualizarEstado(factura.getPatente(),"VENDIDO");
+        ResponseEntity<String> responseEntity = movimientosService.enviarMovimientoFactura(factura);
+        if(responseEntity.getStatusCode().equals(HttpStatus.BAD_REQUEST)){
+            throw new ValidationException("Hubo un error al generar el movimiento", "/integracion/facturas");
+        }
     }
 
     public void anular(Long id) {
@@ -149,5 +174,14 @@ public class FacturaService {
 
     public FacturaResponse getById(Long id) {
         return facturaMapper.entityAResponse(utilService.facturaOrElseThrow(id,"/facturas/getById"));
+    }
+
+    public FacturaResponse financiar(Long idCotizacion, PlanRequest planRequest) {
+        FacturaResponse facturaResponse = save(idCotizacion);
+        Plan plan = planMapper.requestToEntity(planRequest);
+        plan.setFacturaId(facturaResponse.getId());
+        planRepository.save(plan);
+        facturaResponse.setPlanResponse(planMapper.entityToResponse(plan));
+        return facturaResponse;
     }
 }

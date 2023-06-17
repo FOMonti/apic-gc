@@ -60,7 +60,7 @@ public class IntegracionController {
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = GarantiaResponse.class)))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
-    private ResponseEntity<String> aprobarPagoFactura(@RequestParam Long idFactura){
+    public ResponseEntity<String> aprobarPagoFactura(@RequestParam Long idFactura){
         facturaService.aprobarFactura(idFactura);
         return new ResponseEntity<>("Pago generado con éxito",HttpStatus.OK);
     }

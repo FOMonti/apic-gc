@@ -16,9 +16,9 @@ public class VehiculoService {
 
     private final RestTemplate restTemplate;
 
-    private final String URL_GET_PATENTE = "https://gadmin-backend-production.up.railway.app/api/v1/vehicle/getByPlate/";
+    private final String URL_GET_PATENTE = "https://gadmin-backend-production2.up.railway.app/api/v1/vehicle/getByPlate/";
 
-    private final String URL_UPDATE_STATUS = "https://gadmin-backend-production.up.railway.app/api/v1/vehicle/updateStatus";
+    private final String URL_UPDATE_STATUS = "https://gadmin-backend-production2.up.railway.app/api/v1/vehicle/updateStatus";
     @Autowired
     public VehiculoService(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
