@@ -65,7 +65,7 @@ public class FacturaController {
         return new ResponseEntity<>(facturaService.getGarantia(patente), HttpStatus.OK);
     }
 
-    @PutMapping("/anular/{id}")
+    @PostMapping("/anular/{id}")
     @ApiResponse(responseCode = "200", description = "Factura anulada exitosamente",
             content = @Content(mediaType = "application/json"))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
