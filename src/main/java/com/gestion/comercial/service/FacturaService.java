@@ -155,15 +155,18 @@ public class FacturaService {
         Factura factura = utilService.facturaOrElseThrow(id, "/facturas/anular");
         if(!factura.getEstado().equals(EstadoFactura.PENDIENTE)){
             throw new ValidationException(
-                    "Para anular una factura, está debe tener estado PENDIENTE","/integracion/facturas");
+                    "Para anular una factura, está debe tener estado PENDIENTE","/facturas/anular");
         }
         factura.setEstado(EstadoFactura.ANULADO);
-        Optional<Reserva> reservaOptional = reservaRepository.findById(factura.getReservaId());
-        if(reservaOptional.isPresent()){
-            Reserva reserva = reservaOptional.get();
-            reserva.setEstadoReserva(EstadoReserva.ANULADA);
+        if(factura.getReservaId() != null){
+            Optional<Reserva> reservaOptional = reservaRepository.findById(factura.getReservaId());
+            if(reservaOptional.isPresent()){
+                Reserva reserva = reservaOptional.get();
+                reserva.setEstadoReserva(EstadoReserva.ANULADA);
+            }
         }
         vehiculoService.actualizarEstado(factura.getPatente(),"DISPONIBLE");
+        facturaRepository.save(factura);
     }
 
     public List<FacturaResponse> getAll() {
