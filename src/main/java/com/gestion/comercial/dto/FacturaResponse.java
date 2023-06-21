@@ -1,5 +1,6 @@
 package com.gestion.comercial.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gestion.comercial.types.EstadoFactura;
 import lombok.Data;
 
@@ -28,8 +29,10 @@ public class FacturaResponse {
 
     private EstadoFactura estado;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fechaCreacion;
 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private Timestamp fechaPago;
 
     private PlanResponse planResponse;
