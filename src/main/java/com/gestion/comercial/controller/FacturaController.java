@@ -36,12 +36,12 @@ public class FacturaController {
         return new ResponseEntity<>(facturaService.save(idCotizacion), HttpStatus.CREATED);
     }
 
-    @PostMapping("/financiar/save")
+    @PostMapping("/financiar/save/{idCotizacion}")
     @ApiResponse(responseCode = "201", description = "Factura creada exitosamente",
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = FacturaResponse.class)))
     @ApiResponse(responseCode = "400", description = "Error en la solicitud",
             content = @Content(mediaType = "application/json", schema = @Schema (implementation = CustomErrorResponse.class)))
-    public ResponseEntity<FacturaResponse> financiar(@RequestParam Long idCotizacion, @Valid @RequestBody PlanRequest planRequest){
+    public ResponseEntity<FacturaResponse> financiar(@PathVariable Long idCotizacion, @Valid @RequestBody PlanRequest planRequest){
         return new ResponseEntity<>(facturaService.financiar(idCotizacion, planRequest), HttpStatus.CREATED);
     }
 
