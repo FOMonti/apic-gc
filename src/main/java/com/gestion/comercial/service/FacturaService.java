@@ -23,6 +23,7 @@ import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -81,8 +82,18 @@ public class FacturaService {
         factura.setGarantiaExtendida(cotizacionVenta.getGarantiaExtendida());
         facturaRepository.save(factura);
         vehiculoService.actualizarEstado(cotizacionVenta.getPatente(), "RESERVADO");
-
+        anularCotizaciones(cotizacionVenta.getId(), cotizacionVenta.getPatente());
         return facturaMapper.entityAResponse(factura);
+    }
+
+    private void anularCotizaciones(Long id, String patente) {
+        List<CotizacionVenta> cotizacionVentas = cotizacionVentaRepository.getCotizacionVentaByPatente(patente);
+        for(CotizacionVenta cotizacionVenta : cotizacionVentas){
+            if(!Objects.equals(cotizacionVenta.getId(), id)){
+                cotizacionVenta.setEstadoCotizacion(EstadoCotizacion.ANULADO);
+                cotizacionVentaRepository.save(cotizacionVenta);
+            }
+        }
     }
 
     public Long numeroFactura(String sucursal){

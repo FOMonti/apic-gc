@@ -4,6 +4,7 @@ import com.gestion.comercial.entity.CotizacionVenta;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 
@@ -14,4 +15,6 @@ public interface CotizacionVentaRepository extends JpaRepository<CotizacionVenta
 
     @Override
     Optional<CotizacionVenta> findById(Long id);
+
+    List<CotizacionVenta> getCotizacionVentaByPatente(String patente);
 }
